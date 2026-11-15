@@ -10,8 +10,8 @@ const canonical = new URL(path, Astro.site).href;
 const fullTitle = title === s.brand ? s.brand : `${title} · ${s.brand}`;
 const nav = [
   { href: `${base}/projects/`, label: 'Dự án', on: path.startsWith(`${base}/projects`) },
-  { href: `${base}/khoa-hoc/`, label: 'Chuyên môn', on: path.startsWith(`${base}/khoa-hoc`) },
-  { href: `${base}/#gioi-thieu`, label: 'Giới thiệu', on: false },
+  { href: `${base}/chuyen-mon/`, label: 'Chuyên môn', on: path.startsWith(`${base}/chuyen-mon`) },
+  { href: `${base}/gioi-thieu/`, label: 'Giới thiệu', on: path.startsWith(`${base}/gioi-thieu`) },
 ];
 ---
 <!doctype html>

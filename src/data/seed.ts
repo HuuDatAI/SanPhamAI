@@ -5,7 +5,7 @@
  * - Mục thật chỉ có mô tả ở mức đã xác nhận; phần còn thiếu hiển thị "đang bổ sung".
  */
 
-export type Kind = 'funnel' | 'people' | 'chat' | 'lms' | 'building' | 'sheet' | 'cards' | 'calendar';
+export type Kind = 'funnel' | 'people' | 'chat' | 'lms' | 'building' | 'sheet' | 'cards' | 'calendar' | 'flow' | 'prompt' | 'recon' | 'notes';
 
 export interface Category { id: string; name: string; slug: string; }
 
@@ -138,21 +138,21 @@ export const projects: Project[] = [
 const dangBoSung = 'Nội dung chương trình chi tiết đang được bổ sung.';
 export const courses: Course[] = [
   { id: 'c-automation', slug: 'ai-automation', title: 'AI Automation',
-    summary: 'Ứng dụng AI và tự động hóa vào quy trình công việc.',
+    summary: 'AI và tự động hóa những quy trình công việc thường lặp lại.',
     audience: [], syllabus: [dangBoSung], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
-    featured: true, sortOrder: 1, art: 'cards' },
+    featured: true, sortOrder: 1, art: 'flow' },
   { id: 'c-co-ban', slug: 'ai-co-ban', title: 'AI cơ bản',
-    summary: 'Làm quen và thực hành sử dụng AI trong công việc.',
+    summary: 'Làm quen và thực hành cách viết prompt, mô tả yêu cầu hiệu quả.',
     audience: [], syllabus: [dangBoSung], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
-    featured: true, sortOrder: 2, art: 'chat' },
+    featured: true, sortOrder: 2, art: 'prompt' },
   { id: 'c-ke-toan', slug: 'ai-cho-ke-toan', title: 'AI cho kế toán',
-    summary: 'Ứng dụng AI vào các tác vụ kế toán.',
+    summary: 'Ứng dụng AI trong các tác vụ kế toán thường gặp: chứng từ, bảng tính, đối chiếu.',
     audience: ['Người làm kế toán'], syllabus: [dangBoSung], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
-    featured: true, sortOrder: 3, art: 'sheet' },
+    featured: true, sortOrder: 3, art: 'recon' },
   { id: 'c-van-phong', slug: 'ai-cho-dan-van-phong', title: 'AI cho dân văn phòng',
-    summary: 'Ứng dụng AI vào các tác vụ văn phòng.',
+    summary: 'Ứng dụng AI vào công việc văn phòng hằng ngày: ghi chú, tài liệu, báo cáo, trình bày.',
     audience: ['Nhân sự văn phòng'], syllabus: [dangBoSung], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
-    featured: true, sortOrder: 4, art: 'calendar' },
+    featured: true, sortOrder: 4, art: 'notes' },
 ];
 
 /**
