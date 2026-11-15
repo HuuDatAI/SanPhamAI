@@ -18,9 +18,16 @@ function pocAnon_(fileId) {
   let cls = 'unknown';
   if (/accounts.google.com/.test(host) || code === 404) cls = 'private';
   else if (/usercontent.google.com|googleusercontent.com/.test(host)) cls = 'public';
-  return { cls: cls, code: code, host: host, text: cls + '(' + code + ' ' + host + ')' };
+  let hop2 = '';
+  if (loc && loc.indexOf('https://drive.usercontent.google.com/') === 0) {
+    const r2 = UrlFetchApp.fetch(loc, { muteHttpExceptions: true, followRedirects: false });
+    const h2 = r2.getAllHeaders();
+    hop2 = ' -> ' + r2.getResponseCode() + ' ' + String(h2['Content-Type'] || h2['content-type'] || '').split(';')[0] + (h2['Content-Disposition'] || h2['content-disposition'] ? ' +attachment' : '');
+  }
+  return { cls: cls, code: code, host: host, text: cls + '(' + code + ' ' + host + hop2 + ')' };
 }
 
+/** QUYẾT ĐỊNH PASS/FAIL dựa vào hàm này. Phép đo ẩn danh pocAnon_ chỉ là thông tin tham khảo (Drive chuyển hướng 303 giống nhau cho nhiều trạng thái). */
 /** Sự thật từ Drive API: file có quyền type=anyone không (không phụ thuộc cách đo ẩn danh). */
 function pocAnyone_(fileId) {
   const res = driveFetch_('get', DRIVE_API + '/files/' + fileId + '/permissions?fields=permissions(id,type,role)');
@@ -79,7 +86,7 @@ function runPoc() {
     B = adminSaveDraft_(actor, { type: 'project', slug: tag + '-b', draft: { title: 'B v1', cover_media_id: shared.mediaId } });
     made.push(A.id, B.id);
     const leaked = JSON.stringify(publicList_('project')).indexOf(tag) >= 0;
-    rec('T3 draft-not-public', !leaked && pocAnon_(shared.fileId).cls === 'private' && !pocAnyone_(shared.fileId), 'public.list chứa nháp=' + leaked + '; anon=' + pocAnon_(shared.fileId).text + '; permissions anyone=' + pocAnyone_(shared.fileId));
+    rec('T3 draft-not-public', !leaked && !pocAnyone_(shared.fileId), 'public.list chứa nháp=' + leaked + '; anon=' + pocAnon_(shared.fileId).text + '; permissions anyone=' + pocAnyone_(shared.fileId));
   });
 
   attempt('T4 publish-shares-only-needed', function () {
@@ -89,7 +96,7 @@ function runPoc() {
     const folderPublic = folderPerms.some(function (x) { return x.type === 'anyone'; });
     const s1 = pocAnon_(shared.fileId), s2 = pocAnon_(only.fileId);
     const p1 = pocAnyone_(shared.fileId), p2 = pocAnyone_(only.fileId);
-    rec('T4 publish-shares-only-needed', s1.cls === 'public' && s2.cls === 'public' && p1 && p2 && !folderPublic && publicList_('project').length >= 2, 'anon shared=' + s1.text + ' onlyA=' + s2.text + '; perm anyone shared=' + p1 + ' onlyA=' + p2 + '; folderPublic=' + folderPublic);
+    rec('T4 publish-shares-only-needed', p1 && p2 && !folderPublic && publicList_('project').length >= 2, 'anon shared=' + s1.text + ' onlyA=' + s2.text + '; perm anyone shared=' + p1 + ' onlyA=' + p2 + '; folderPublic=' + folderPublic);
   });
 
   attempt('T5 edit-draft-keeps-published', function () {
@@ -111,14 +118,14 @@ function runPoc() {
     const p1 = pocAnyone_(shared.fileId), p2 = pocAnyone_(only.fileId);
     let gone = false;
     try { publicGet_('project', tag + '-a'); } catch (e) { gone = e.code === 'NOT_FOUND'; }
-    rec('T7 hide-one-shared-file-stays', gone && p1 && !p2 && s1.cls === 'public' && s2.cls === 'private' && r.revokePending.length === 0, 'A gone=' + gone + '; perm anyone shared=' + p1 + ' onlyA=' + p2 + '; anon shared=' + s1.text + ' onlyA=' + s2.text);
+    rec('T7 hide-one-shared-file-stays', gone && p1 && !p2 && r.revokePending.length === 0, 'A gone=' + gone + '; perm anyone shared=' + p1 + ' onlyA=' + p2 + '; anon shared=' + s1.text + ' onlyA=' + s2.text);
   });
 
   attempt('T8 hide-last-revokes', function () {
     const before = pocAnyone_(shared.fileId); // phải đang công khai thì ca này mới có giá trị
     adminHide_(actor, { id: B.id, operationId: tag + '-hb' });
     const after = pocAnyone_(shared.fileId), s1 = pocAnon_(shared.fileId);
-    rec('T8 hide-last-revokes', before === true && after === false && s1.cls === 'private', 'trước ẩn anyone=' + before + '; sau ẩn anyone=' + after + '; anon=' + s1.text);
+    rec('T8 hide-last-revokes', before === true && after === false, 'trước ẩn anyone=' + before + '; sau ẩn anyone=' + after + '; anon=' + s1.text);
   });
 
   attempt('T9 external-permission-untouched', function () {
@@ -131,7 +138,7 @@ function runPoc() {
     const appOwned = !!row.app_permission_id; // phải rỗng: quyền này không do ứng dụng cấp
     adminHide_(actor, { id: C.id });
     const still = pocAnyone_(ext.fileId), s = pocAnon_(ext.fileId);
-    rec('T9 external-permission-untouched', !appOwned && still === true && s.cls === 'public', 'app_permission_id rỗng=' + !appOwned + '; sau ẩn anyone còn=' + still + '; anon=' + s.text);
+    rec('T9 external-permission-untouched', !appOwned && still === true, 'app_permission_id rỗng=' + !appOwned + '; sau ẩn anyone còn=' + still + '; anon=' + s.text);
   });
 
   attempt('T10 resumable-session-server-init', function () {
