@@ -29,6 +29,12 @@ export interface Project {
   isSample: boolean;        // true = minh họa (luôn hiện nhãn)
   art: Kind;                // hình minh họa vẽ tay, không phải ảnh hệ thống thật
   motionPreset: 'subtle' | 'narrative';
+  /** Trạng thái dự án: in_progress hiện nhãn "Đang phát triển"; mặc định không hiện nhãn. */
+  developmentStatus?: 'in_progress';
+  /** Màn hình ĐÃ QUAN SÁT trên giao diện (chưa kiểm thử chức năng) — hiện kèm lời nói rõ mức xác minh. */
+  observedScreens?: string[];
+  /** Lưu ý công khai về giới hạn của nội dung/dự án. */
+  caveats?: string[];
 }
 
 export interface Course {
@@ -86,11 +92,24 @@ export const projects: Project[] = [
     featured: true, sortOrder: 4, isSample: false, art: 'lms', motionPreset: 'narrative',
   },
   {
-    id: 'p-xay-dung', slug: 'giai-phap-ai-cho-doanh-nghiep-xay-dung', title: 'Giải pháp AI cho doanh nghiệp xây dựng',
-    summary: 'Giải pháp AI áp dụng trong lĩnh vực xây dựng.',
-    industryIds: ['ind-xay-dung'], solutionIds: ['sol-ai'], technologies: [], features: [],
-    verification: 'owner_confirmed', problem: '', role: '', scope: 'Giải pháp AI áp dụng trong lĩnh vực xây dựng.', solutionBlocks: [], outcomes: [],
+    id: 'p-xay-dung', slug: 'he-thong-quan-tri-du-an-xay-dung', title: 'Hệ thống quản trị dự án & quy trình doanh nghiệp xây dựng',
+    summary: 'Tôi đang phát triển hệ thống tập trung thông tin dự án, công việc và các quy trình phối hợp trong doanh nghiệp xây dựng.',
+    industryIds: ['ind-xay-dung'], solutionIds: ['sol-he-thong'], technologies: [], features: [],
+    verification: 'owner_confirmed', problem: '', role: '', scope: 'Hệ thống tập trung thông tin dự án, công việc và quy trình phối hợp trong doanh nghiệp xây dựng; các phân hệ đang được hoàn thiện và kiểm thử.', solutionBlocks: [], outcomes: [],
     featured: true, sortOrder: 5, isSample: false, art: 'building', motionPreset: 'narrative',
+    developmentStatus: 'in_progress',
+    observedScreens: [
+      'Tổng quan điều hành: chỉ số, công việc cá nhân, việc chờ duyệt, dự án gần đây, gói thầu sắp đến hạn',
+      'Danh mục dự án dạng bảng: mã, giai đoạn, kết quả thầu, người thực hiện, tiến độ, hạn; có tìm kiếm, lọc và phân trang',
+      'Chi tiết dự án: thông tin chung, trạng thái, mốc tiến độ, thông tin đấu thầu',
+      'Phân hệ đấu thầu: bảng gói thầu và trạng thái',
+      'Phân hệ hỏi giá nhà cung cấp: bảng yêu cầu báo giá và trạng thái',
+    ],
+    caveats: [
+      'Hệ thống đang phát triển; một số phân hệ chưa hoàn thiện.',
+      'Mô tả dựa trên các màn hình đã có; chưa công bố chức năng nào là đã kiểm thử đầy đủ.',
+      'Chưa công bố tích hợp AI, đăng nhập một lần hay kết nối kho tài liệu vì chưa được xác minh.',
+    ],
   },
   // ---- Dữ liệu minh họa (không phải dự án đã thực hiện) ----
   {

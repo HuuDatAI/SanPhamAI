@@ -45,7 +45,8 @@ export function validateProjects(list: Project[]): string[] {
     for (const id of p.industryIds) if (!industries.some((c) => c.id === id)) errs.push(`${at} ngành không tồn tại: ${id}`);
     for (const id of p.solutionIds) if (!solutions.some((c) => c.id === id)) errs.push(`${at} loại giải pháp không tồn tại: ${id}`);
     for (const u of [p.videoUrl, p.demoUrl]) if (u && !/^https?:\/\//i.test(u)) errs.push(`${at} URL không phải http/https`);
-    const texts = [p.title, p.summary, p.problem, p.role, p.scope, ...p.solutionBlocks, ...p.features, ...p.technologies, ...p.outcomes];
+    if (p.developmentStatus && p.developmentStatus !== 'in_progress') errs.push(`${at} developmentStatus không hợp lệ`);
+    const texts = [p.title, p.summary, p.problem, p.role, p.scope, ...p.solutionBlocks, ...p.features, ...p.technologies, ...p.outcomes, ...(p.observedScreens ?? []), ...(p.caveats ?? [])];
     if (texts.some((t) => /<[a-z!\/]/i.test(t) || /javascript:/i.test(t))) errs.push(`${at} chứa HTML/script`);
   }
   return errs;

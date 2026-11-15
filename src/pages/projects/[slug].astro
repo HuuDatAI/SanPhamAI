@@ -15,6 +15,8 @@ const sols = p.solutionIds.map((i) => nameOf(getSolutions(), i));
 const demo = safeUrl(p.demoUrl);
 const pending = 'Đang bổ sung.';
 const solution = [...p.solutionBlocks, ...p.features];
+const observed = p.observedScreens ?? [];
+const caveats = p.caveats ?? [];
 ---
 <Base title={p.title} description={p.summary}>
   <div class="wrap">
@@ -26,9 +28,12 @@ const solution = [...p.solutionBlocks, ...p.features];
 
       <article class="story">
         <header class="reveal">
-          {p.isSample
-            ? <span class="badge-sample">Minh họa</span>
-            : <span class="confirm">Phạm vi do chủ website xác nhận · chi tiết đang bổ sung</span>}
+          <div class="badges">
+            {p.developmentStatus === 'in_progress' && <span class="badge-dev">Đang phát triển</span>}
+            {p.isSample
+              ? <span class="badge-sample">Minh họa</span>
+              : <span class="confirm">Phạm vi do chủ website xác nhận · chi tiết đang bổ sung</span>}
+          </div>
           <h1>{p.title}</h1>
           <p class="lead">{p.summary}</p>
           <div class="tags">{[...inds, ...sols].map((n) => <span class="tag">{n}</span>)}</div>
@@ -41,9 +46,15 @@ const solution = [...p.solutionBlocks, ...p.features];
           {!p.role && p.scope && <p class="muted small">Vai trò cụ thể: đang bổ sung.</p>}
         </section>
         <section class="reveal"><h2><span>03</span>Giải pháp</h2>
-          {solution.length > 0
-            ? <ul>{solution.map((x) => <li>{x}</li>)}</ul>
-            : <p class="muted">{pending} Chưa công bố tính năng chưa được xác nhận.</p>}
+          {solution.length > 0 && <ul>{solution.map((x) => <li>{x}</li>)}</ul>}
+          {observed.length > 0 && (
+            <div>
+              <p class="obs-lead"><strong>Các màn hình phiên bản hiện tại đã có</strong> <span class="muted">(đã xem giao diện, chưa kiểm thử đầy đủ chức năng):</span></p>
+              <ul>{observed.map((x) => <li>{x}</li>)}</ul>
+            </div>
+          )}
+          {solution.length === 0 && observed.length === 0 && <p class="muted">{pending} Chưa công bố tính năng chưa được xác nhận.</p>}
+          {caveats.length > 0 && <ul class="caveats">{caveats.map((x) => <li>{x}</li>)}</ul>}
           {p.technologies.length > 0 && <div class="tags">{p.technologies.map((t) => <span class="tag">{t}</span>)}</div>}
         </section>
         <section class="reveal"><h2><span>04</span>Hình ảnh và video</h2>
@@ -79,6 +90,9 @@ const solution = [...p.solutionBlocks, ...p.features];
   .story header { margin-bottom: 8px; }
   .lead { font-size: 16px; color: var(--muted); }
   .confirm { font-size: 13px; color: var(--muted); }
+  .badges { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .obs-lead { margin: 10px 0 4px; font-size: 14px; }
+  .caveats { margin-top: 10px; padding-left: 18px; color: var(--muted); font-size: 13.5px; }
   section { padding: 18px 0; border-top: 1px solid var(--line); }
   section h2 { font-size: 17px; display: flex; gap: 12px; align-items: baseline; }
   section h2 span { font-size: 12px; color: var(--muted); font-weight: 500; }

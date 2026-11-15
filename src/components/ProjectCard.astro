@@ -13,6 +13,7 @@ const search = [p.title, p.summary, ...p.technologies, ...inds, ...sols].join(' 
    data-card data-ind={p.industryIds.join(' ')} data-sol={p.solutionIds.join(' ')} data-text={search}>
   <Scene kind={p.art} thumb depths={[0, 0, 0]} />
   <div class="body">
+    {p.developmentStatus === 'in_progress' && <span class="badge-dev">Đang phát triển</span>}
     {p.isSample && <span class="badge-sample">Minh họa</span>}
     <h3>{p.title}</h3>
     <p>{p.summary}</p>
