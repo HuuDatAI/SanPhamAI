@@ -1,5 +1,5 @@
 ---
-import { getSettings } from '../lib/store';
+import { getSettings, safeUrl } from '../lib/store';
 import ZaloButton from '../components/ZaloButton.astro';
 interface Props { title: string; description?: string; noindex?: boolean; hero?: boolean }
 const { title, description = 'Dự án AI & chuyển đổi số, chương trình đào tạo AI ứng dụng.', noindex = false, hero = false } = Astro.props;
@@ -8,6 +8,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const path = Astro.url.pathname;
 const canonical = new URL(path, Astro.site).href;
 const fullTitle = title === s.brand ? s.brand : `${title} · ${s.brand}`;
+const hasQr = !!s.zaloQr;
+const drive = safeUrl(s.zaloQrDrive);
 const nav = [
   { href: `${base}/projects/`, label: 'Dự án', on: path.startsWith(`${base}/projects`) },
   { href: `${base}/chuyen-mon/`, label: 'Chuyên môn', on: path.startsWith(`${base}/chuyen-mon`) },
@@ -45,7 +47,7 @@ const nav = [
       <nav aria-label="Điều hướng chính">
         {nav.map((n) => <a href={n.href} aria-current={n.on ? 'page' : undefined}>{n.label}</a>)}
       </nav>
-      <a class="btn accent" href={`${base}/lien-he/`}>Liên hệ</a>
+      <ZaloButton label="Liên hệ" variant="accent" source="header" />
     </div>
   </header>
   <main id="main"><slot /></main>
@@ -60,6 +62,24 @@ const nav = [
       </div>
     </div>
   </footer>
+  {hasQr && (
+    <dialog id="qrDlg" class="qr-dlg" aria-label="Mã QR Zalo">
+      <figure>
+        <img src={s.zaloQr} alt={s.zaloQrAlt} width="840" height="1280" />
+        <figcaption>{s.zaloQrCaption}</figcaption>
+      </figure>
+      <div class="qr-act">
+        {drive && <a class="btn line" href={drive} target="_blank" rel="noopener noreferrer">Mở ảnh QR</a>}
+        <button type="button" class="btn accent" id="qrClose">Đóng</button>
+      </div>
+    </dialog>
+  )}
+  <script>
+    const qrDlg = document.getElementById('qrDlg') as HTMLDialogElement | null;
+    document.querySelectorAll('[data-qr-open]').forEach((b) => b.addEventListener('click', () => qrDlg?.showModal()));
+    document.getElementById('qrClose')?.addEventListener('click', () => qrDlg?.close());
+    qrDlg?.addEventListener('click', (e) => { if (e.target === qrDlg) qrDlg.close(); });
+  </script>
   <script>
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
     const desktop = window.matchMedia('(min-width: 861px)');
@@ -163,6 +183,12 @@ const nav = [
   .btn.light:hover { background: rgba(255,255,255,.08); border-color: var(--on-dark); }
   .btn.is-off { border-style: dashed; background: transparent; color: var(--muted); border-color: #9aa5ba; cursor: default; }
   .btn.is-off:hover { background: transparent; }
+  .qr-dlg { border: 0; border-radius: 16px; padding: 16px; width: min(440px, 94vw); background: var(--paper); color: var(--ink); max-height: 96vh; }
+  .qr-dlg::backdrop { background: rgba(11,20,36,.72); }
+  .qr-dlg figure { margin: 0; }
+  .qr-dlg img { display: block; margin: 0 auto; width: auto; max-width: 100%; max-height: 68vh; height: auto; border-radius: 12px; }
+  .qr-dlg figcaption { text-align: center; font-size: 14px; color: var(--muted); margin: 10px 0 0; }
+  .qr-act { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
   .on-dark .btn.is-off, .dark .btn.is-off { color: var(--on-dark-muted); border-color: #5a6a8a; }
 
   .section { padding: clamp(28px, 4.5vw, 52px) 0; }

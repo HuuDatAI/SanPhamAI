@@ -9,15 +9,16 @@ const qr = s.zaloQr;
 <Base title="Liên hệ" description="Trao đổi dự án hoặc chương trình đào tạo qua Zalo.">
   <div class="wrap narrow">
     <h1 class="pg-title">Liên hệ qua Zalo</h1>
-    <p class="muted">Trang web này không có biểu mẫu và không thu thập thông tin của bạn. Hãy nhắn qua Zalo và cho tôi biết dự án hoặc chương trình bạn quan tâm; bạn có thể dùng nút "Sao chép tên và đường dẫn" ở trang chi tiết để gửi kèm.</p>
-    {hasLink && <p><ZaloButton label="Mở Zalo" source="contact-page" /></p>}
+    <p class="muted">Trang web không có biểu mẫu thu thập thông tin liên hệ. Hãy nhắn qua Zalo và cho tôi biết dự án hoặc chủ đề bạn quan tâm; bạn có thể dùng nút "Sao chép tên và đường dẫn" ở trang chi tiết để gửi kèm.</p>
+    {hasLink && <p><ZaloButton label="Mở Zalo" variant="accent" source="contact-page" /></p>}
     {qr && (
       <figure class="qr">
-        <img src={qr} alt="Mã QR Zalo" width="240" height="240" />
-        <figcaption class="muted">Quét mã QR bằng ứng dụng Zalo.</figcaption>
+        <img src={qr} alt={s.zaloQrAlt} width="840" height="1280" />
+        <figcaption class="muted">{s.zaloQrCaption}</figcaption>
+        <p><button type="button" class="btn line" data-qr-open aria-haspopup="dialog">Phóng to mã QR</button></p>
       </figure>
     )}
     {!hasLink && !qr && <p class="state" role="status">Chủ website chưa cấu hình Zalo. Thông tin liên hệ sẽ hiển thị tại đây khi sẵn sàng.</p>}
   </div>
 </Base>
-<style>.narrow { max-width: 680px; padding-bottom: 32px; } .pg-title { margin: 32px 0 14px; } .qr { margin: 24px 0; } .qr img { border: 1px solid var(--line); border-radius: 12px; }</style>
+<style>.narrow { max-width: 680px; padding-bottom: 32px; } .pg-title { margin: 32px 0 14px; } .qr { margin: 24px 0; } .qr img { width: min(100%, 300px); height: auto; border: 1px solid var(--line); border-radius: 14px; }</style>

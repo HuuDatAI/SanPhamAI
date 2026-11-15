@@ -174,6 +174,16 @@ export const settings = {
   headline: 'Từ bài toán vận hành đến hệ thống AI ứng dụng.',
   intro: 'Bạn đang có việc lặp lại mỗi ngày, báo cáo làm tay, dữ liệu nằm rải rác? Tôi cùng bạn chọn bài toán, thử giải pháp AI phù hợp và hướng dẫn đội ngũ dùng được trong công việc thật.',
   copyApproved: true, // chủ website đã duyệt nội dung profile (yêu cầu 16/11)
+  /**
+   * Zalo. QR là ảnh do chủ website cung cấp (public/contact/zalo-qr.png, giữ nguyên bytes, không nén/cắt).
+   * zaloUrl: CHỈ điền sau khi chủ website xác nhận mở đúng hồ sơ. Giải mã cục bộ từ QR cho ra
+   * https://zaloapp.com/qr/p/3v0plyu9tg37?src=qr (chưa xác nhận bằng quét thực tế → chưa cấu hình để không dẫn nhầm).
+   * Khi zaloUrl rỗng, mọi nút liên hệ là "Quét mã Zalo" và mở hộp thoại QR.
+   */
   zaloUrl: import.meta.env.PUBLIC_ZALO_URL ?? '',
-  zaloQr: import.meta.env.PUBLIC_ZALO_QR ?? '',
+  zaloQr: import.meta.env.PUBLIC_ZALO_QR ?? (import.meta.env.BASE_URL.replace(/\/$/, '') + '/contact/zalo-qr.png'),
+  zaloQrCaption: 'Quét mã để kết nối Zalo với Đỗ Trường Sơn',
+  zaloQrAlt: 'Mã QR Zalo của Đỗ Trường Sơn. Mở Zalo, bấm nút quét QR để kết bạn.',
+  /** Link xem ảnh QR trên Drive (quyền "ai có link" đã kiểm qua Drive API); chỉ là phương án dự phòng, không phải link Zalo. */
+  zaloQrDrive: 'https://drive.google.com/file/d/1IZeoAoyBm7L5fbgviynJ8Gw7xwcK2Zgu/view',
 };

@@ -9,6 +9,8 @@ const dist = join(root, 'dist');
 const localList = join(root, 'scripts', 'forbidden.local.txt');
 const forbidden = existsSync(localList) ? readFileSync(localList, 'utf8').split('\n').map((s) => s.trim().toLowerCase()).filter(Boolean) : [];
 const allowedHosts = new Set(['fonts.googleapis.com', 'fonts.gstatic.com', 'sonreus259-gif.github.io']);
+// Liên kết ngoài được phép CHÍNH XÁC theo đường dẫn (không mở cả tên miền): ảnh QR Zalo dự phòng do chủ website cung cấp.
+const allowedPrefixes = ['https://drive.google.com/file/d/1IZeoAoyBm7L5fbgviynJ8Gw7xwcK2Zgu/'];
 
 function walk(dir) { return readdirSync(dir).flatMap((f) => { const p = join(dir, f); return statSync(p).isDirectory() ? walk(p) : [p]; }); }
 if (!existsSync(dist)) { console.error('Chưa build: chạy npm run build trước.'); process.exit(2); }
@@ -18,8 +20,9 @@ for (const f of walk(dist).filter((p) => /\.(html|xml|txt|json|js|css|svg)$/.tes
   files++;
   const text = readFileSync(f, 'utf8'); const low = text.toLowerCase();
   for (const w of forbidden) if (low.includes(w)) { console.error(`CẤM  ${f}: chứa từ trong danh sách cục bộ`); bad++; }
-  for (const m of text.matchAll(/https?:\/\/([a-z0-9.-]+)/gi)) {
+  for (const m of text.matchAll(/https?:\/\/([a-z0-9.-]+)([^\s"'<>)]*)/gi)) {
     const h = m[1].toLowerCase();
+    if (allowedPrefixes.some((p) => m[0].startsWith(p))) continue;
     if (!allowedHosts.has(h) && !['www.w3.org'].includes(h)) { console.error(`LINK  ${f}: host ngoài whitelist: ${h}`); bad++; }
   }
   if (/\bdownload\b\s*[=>]/i.test(text) && f.endsWith('.html')) { console.error(`TẢI  ${f}: có thuộc tính download`); bad++; }
