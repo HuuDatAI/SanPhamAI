@@ -21,6 +21,11 @@ const fullTitle = title === s.brand ? s.brand : `${title} · ${s.brand}`;
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="vi_VN" />
   {noindex && <meta name="robots" content="noindex" />}
+  <script is:inline>
+    // Chỉ ẩn nội dung chờ hiệu ứng khi JS chạy được; nếu script chuyển động không khởi động trong 4 giây thì hiện lại hết.
+    document.documentElement.classList.add('js');
+    setTimeout(function () { if (!window.__motionReady) document.documentElement.classList.remove('js'); }, 4000);
+  </script>
   <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -52,6 +57,43 @@ const fullTitle = title === s.brand ? s.brand : `${title} · ${s.brand}`;
       <ZaloButton label="Trao đổi qua Zalo" variant="line" source="footer" />
     </div>
   </footer>
+  <script>
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const desktop = window.matchMedia('(min-width: 861px)');
+
+    // 1) Reveal khi cuộn tới (một lần).
+    const items = [...document.querySelectorAll<HTMLElement>('.reveal')];
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      items.forEach((e) => e.classList.add('in'));
+    } else {
+      const io = new IntersectionObserver((entries) => {
+        for (const en of entries) if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+      }, { rootMargin: '0px 0px -6% 0px', threshold: 0.08 });
+      items.forEach((e) => io.observe(e));
+    }
+
+    // 2) Parallax nhẹ (tối đa 24px, chỉ desktop, tắt khi giảm chuyển động).
+    const par = [...document.querySelectorAll<HTMLElement>('[data-parallax]')];
+    let ticking = false;
+    function update() {
+      ticking = false;
+      if (reduce.matches || !desktop.matches) { par.forEach((p) => (p.style.transform = '')); return; }
+      const vh = window.innerHeight;
+      for (const p of par) {
+        const box = (p.parentElement as HTMLElement).getBoundingClientRect();
+        if (box.bottom < 0 || box.top > vh) continue;
+        const progress = (box.top + box.height / 2 - vh / 2) / vh;
+        const y = Math.max(-24, Math.min(24, -progress * 40));
+        p.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0) scale(1.08)';
+      }
+    }
+    window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    window.addEventListener('resize', update);
+    reduce.addEventListener('change', update);
+    if (par.length) update();
+
+    (window as unknown as { __motionReady: boolean }).__motionReady = true;
+  </script>
 </body>
 </html>
 
@@ -120,11 +162,17 @@ const fullTitle = title === s.brand ? s.brand : `${title} · ${s.brand}`;
   .crumbs { font-size: 14px; color: var(--muted); padding: 22px 0 6px; }
   .crumbs a { text-decoration: none; border-bottom: 1px solid var(--line); }
 
+  /* Hợp đồng chuyển động: hover/focus 160–220ms; reveal = opacity + translateY 16px, 500ms, stagger 70ms; ảnh scale tối đa ~1.02.
+     Mặc định MỌI nội dung hiển thị; chỉ khi có class .js (script chạy được) và người dùng không chọn giảm chuyển động mới ẩn chờ reveal. */
   @media (prefers-reduced-motion: no-preference) {
-    .reveal { animation: rise .5s ease both; }
-    .card:hover { transform: translateY(-2px); }
-    @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .js .reveal { opacity: 0; transform: translateY(16px); }
+    .js .reveal.in { opacity: 1; transform: none; transition: opacity .5s ease, transform .5s ease; transition-delay: calc(var(--d, 0) * 70ms); }
+    .art svg { transition: transform .2s ease; }
+    .card:hover .art svg, .show-list a:hover ~ * .art svg { transform: scale(1.02); }
+    .link-arrow::after { display: inline-block; transition: transform .18s ease; }
+    .link-arrow:hover::after, .card:hover .go::after { transform: translateX(3px); }
   }
+  .link-arrow::after { content: ' →'; }
   @media (max-width: 640px) {
     .bar { gap: 10px; flex-wrap: wrap; padding: 8px 0; }
     .bar nav { order: 3; width: 100%; margin-left: 0; gap: 18px; }

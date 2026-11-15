@@ -9,15 +9,26 @@ export type Kind = 'funnel' | 'people' | 'chat' | 'lms' | 'building' | 'sheet' |
 
 export interface Category { id: string; name: string; slug: string; }
 
+/** owner_confirmed: phạm vi do chủ website xác nhận (chi tiết có thể còn thiếu). illustrative: dữ liệu minh họa. */
+export type Verification = 'owner_confirmed' | 'illustrative';
+
+/** Lược đồ dự án thống nhất (BA-011/tệp 08). Trường chưa biết để rỗng — giao diện hiện "đang bổ sung", không tự điền. */
 export interface Project {
   id: string; slug: string; title: string; summary: string;
   industryIds: string[]; solutionIds: string[];
+  verification: Verification;
+  problem: string;          // bài toán/bối cảnh do chủ dự án xác nhận
+  role: string;             // vai trò chính xác của chủ website
+  scope: string;            // phạm vi đã xác nhận
+  solutionBlocks: string[]; // đoạn mô tả giải pháp đã biết
+  features: string[];       // chỉ tính năng đã xác nhận
   technologies: string[];
-  features: string[];      // chỉ tính năng đã xác nhận; để trống nếu chưa có
-  problem?: string;
-  videoUrl?: string; demoUrl?: string;
+  outcomes: string[];       // định tính hoặc số liệu có nguồn; để trống nếu chưa có
+  videoUrl?: string; demoUrl?: string;   // chỉ http/https
   featured: boolean; sortOrder: number;
-  isSample: boolean; art: Kind;
+  isSample: boolean;        // true = minh họa (luôn hiện nhãn)
+  art: Kind;                // hình minh họa vẽ tay, không phải ảnh hệ thống thật
+  motionPreset: 'subtle' | 'narrative';
 }
 
 export interface Course {
@@ -50,50 +61,58 @@ export const projects: Project[] = [
     id: 'p-tuyen-dung', slug: 'ai-ho-tro-tuyen-dung', title: 'AI hỗ trợ tuyển dụng',
     summary: 'Giải pháp AI hỗ trợ công việc tuyển dụng.',
     industryIds: ['ind-nhan-su'], solutionIds: ['sol-ai'], technologies: [], features: [],
-    featured: true, sortOrder: 1, isSample: false, art: 'people',
+    verification: 'owner_confirmed', problem: '', role: '', scope: 'Giải pháp AI hỗ trợ công việc tuyển dụng.', solutionBlocks: [], outcomes: [],
+    featured: true, sortOrder: 1, isSample: false, art: 'people', motionPreset: 'narrative',
   },
   {
     id: 'p-ban-hang', slug: 'ai-phan-tich-hieu-qua-ban-hang', title: 'AI phân tích hiệu quả bán hàng',
     summary: 'Giải pháp AI hỗ trợ phân tích hiệu quả hoạt động bán hàng.',
     industryIds: ['ind-ban-hang'], solutionIds: ['sol-ai', 'sol-du-lieu'], technologies: [], features: [],
-    featured: true, sortOrder: 2, isSample: false, art: 'funnel',
+    verification: 'owner_confirmed', problem: '', role: '', scope: 'Giải pháp AI hỗ trợ phân tích hiệu quả bán hàng.', solutionBlocks: [], outcomes: [],
+    featured: true, sortOrder: 2, isSample: false, art: 'funnel', motionPreset: 'narrative',
   },
   {
     id: 'p-tu-van', slug: 'ai-tu-van-khach-hang-da-kenh', title: 'AI tư vấn khách hàng đa kênh',
     summary: 'AI tư vấn khách hàng qua mạng xã hội và các kênh thương mại điện tử.',
     industryIds: ['ind-tmdt', 'ind-ban-hang'], solutionIds: ['sol-ai', 'sol-tu-dong'], technologies: [], features: [],
-    featured: true, sortOrder: 3, isSample: false, art: 'chat',
+    verification: 'owner_confirmed', problem: '', role: '', scope: 'AI tư vấn khách hàng qua mạng xã hội và các kênh thương mại điện tử.', solutionBlocks: [], outcomes: [],
+    featured: true, sortOrder: 3, isSample: false, art: 'chat', motionPreset: 'narrative',
   },
   {
     id: 'p-lms', slug: 'lms-cho-doanh-nghiep', title: 'LMS cho doanh nghiệp',
     summary: 'Hệ thống phục vụ đào tạo nội bộ: quản lý học viên, quản lý nội dung và theo dõi tiến độ học.',
     industryIds: ['ind-dao-tao'], solutionIds: ['sol-he-thong'], technologies: [], features: [],
-    featured: true, sortOrder: 4, isSample: false, art: 'lms',
+    verification: 'owner_confirmed', problem: '', role: '', scope: 'Phát triển hệ thống; quản lý học viên, quản lý nội dung và theo dõi tiến độ học.', solutionBlocks: [], outcomes: [],
+    featured: true, sortOrder: 4, isSample: false, art: 'lms', motionPreset: 'narrative',
   },
   {
     id: 'p-xay-dung', slug: 'giai-phap-ai-cho-doanh-nghiep-xay-dung', title: 'Giải pháp AI cho doanh nghiệp xây dựng',
     summary: 'Giải pháp AI áp dụng trong lĩnh vực xây dựng.',
     industryIds: ['ind-xay-dung'], solutionIds: ['sol-ai'], technologies: [], features: [],
-    featured: true, sortOrder: 5, isSample: false, art: 'building',
+    verification: 'owner_confirmed', problem: '', role: '', scope: 'Giải pháp AI áp dụng trong lĩnh vực xây dựng.', solutionBlocks: [], outcomes: [],
+    featured: true, sortOrder: 5, isSample: false, art: 'building', motionPreset: 'narrative',
   },
   // ---- Dữ liệu minh họa (không phải dự án đã thực hiện) ----
   {
     id: 's-quy', slug: 'mau-so-quy-thu-chi', title: 'Sổ quỹ thu chi nội bộ',
     summary: 'Ví dụ minh họa: nhập phiếu thu, phiếu chi và tự tính tồn quỹ.',
     industryIds: ['ind-ke-toan'], solutionIds: ['sol-du-lieu'], technologies: ['Google Sheets'], features: [],
-    featured: false, sortOrder: 6, isSample: true, art: 'sheet',
+    verification: 'illustrative', problem: '', role: '', scope: '', solutionBlocks: [], outcomes: [],
+    featured: false, sortOrder: 6, isSample: true, art: 'sheet', motionPreset: 'subtle',
   },
   {
     id: 's-noi-dung', slug: 'mau-lich-noi-dung', title: 'Lịch nội dung mạng xã hội',
     summary: 'Ví dụ minh họa: lên lịch bài đăng theo kênh và theo trạng thái duyệt.',
     industryIds: ['ind-tmdt'], solutionIds: ['sol-tu-dong'], technologies: ['Google Sheets'], features: [],
-    featured: false, sortOrder: 7, isSample: true, art: 'calendar',
+    verification: 'illustrative', problem: '', role: '', scope: '', solutionBlocks: [], outcomes: [],
+    featured: false, sortOrder: 7, isSample: true, art: 'calendar', motionPreset: 'subtle',
   },
   {
     id: 's-van-ban', slug: 'mau-theo-doi-van-ban', title: 'Sổ theo dõi văn bản đến – đi',
     summary: 'Ví dụ minh họa: vào sổ văn bản và theo dõi hạn xử lý.',
     industryIds: ['ind-van-phong'], solutionIds: ['sol-he-thong'], technologies: ['Google Sheets'], features: [],
-    featured: false, sortOrder: 8, isSample: true, art: 'cards',
+    verification: 'illustrative', problem: '', role: '', scope: '', solutionBlocks: [], outcomes: [],
+    featured: false, sortOrder: 8, isSample: true, art: 'cards', motionPreset: 'subtle',
   },
 ];
 

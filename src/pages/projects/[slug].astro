@@ -13,45 +13,80 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const inds = p.industryIds.map((i) => nameOf(getIndustries(), i));
 const sols = p.solutionIds.map((i) => nameOf(getSolutions(), i));
 const demo = safeUrl(p.demoUrl);
-const missing = !p.problem && p.features.length === 0 && p.technologies.length === 0;
+const pending = 'Đang bổ sung.';
+const solution = [...p.solutionBlocks, ...p.features];
 ---
 <Base title={p.title} description={p.summary}>
   <div class="wrap">
     <nav class="crumbs" aria-label="Điều hướng phụ"><a href={`${base}/projects/`}>← Quay lại danh sách dự án</a></nav>
-    <article class="detail">
-      <header>
-        {p.isSample && <span class="badge-sample">Minh họa</span>}
-        <h1>{p.title}</h1>
-        <p class="lead">{p.summary}</p>
-        <div class="tags">{[...inds, ...sols].map((n) => <span class="tag">{n}</span>)}</div>
-      </header>
-
-      <div class="cover"><Art kind={p.art} /></div>
-
-      {p.problem && <section><h2>Bài toán cần giải quyết</h2><p>{p.problem}</p></section>}
-      {p.features.length > 0 && <section><h2>Tính năng</h2><ul>{p.features.map((f) => <li>{f}</li>)}</ul></section>}
-      {p.technologies.length > 0 && <section><h2>Công nghệ</h2><div class="tags">{p.technologies.map((t) => <span class="tag">{t}</span>)}</div></section>}
-      {missing && <p class="state">Thông tin chi tiết, hình ảnh thật và demo của dự án này đang được bổ sung.</p>}
-      {demo && <p><a class="btn line" href={demo} target="_blank" rel="noopener noreferrer">Dùng thử</a></p>}
-
-      <aside class="ask">
-        <h2>Cần giải pháp tương tự?</h2>
-        <p class="muted">Gửi tên dự án qua Zalo để trao đổi. Bạn có thể sao chép tên và đường dẫn dưới đây để gửi kèm.</p>
-        <div class="cta-row">
-          <ZaloButton label="Tư vấn làm dự án tương tự" source="project" entity={p.id} />
-          <CopyLink title={p.title} />
-        </div>
+    <div class="detail">
+      <aside class="side" aria-label="Hình minh họa">
+        <div class="side-box"><Art kind={p.art} note={false} /><span class="stage-note">Hình minh họa · không phải ảnh hệ thống thật</span></div>
       </aside>
-    </article>
+
+      <article class="story">
+        <header class="reveal">
+          {p.isSample
+            ? <span class="badge-sample">Minh họa</span>
+            : <span class="confirm">Phạm vi do chủ website xác nhận · chi tiết đang bổ sung</span>}
+          <h1>{p.title}</h1>
+          <p class="lead">{p.summary}</p>
+          <div class="tags">{[...inds, ...sols].map((n) => <span class="tag">{n}</span>)}</div>
+        </header>
+
+        <section class="reveal"><h2><span>01</span>Bài toán</h2><p class:list={[!p.problem && 'muted']}>{p.problem || pending}</p></section>
+        <section class="reveal"><h2><span>02</span>Vai trò và phạm vi</h2>
+          {p.role && <p><strong>Vai trò:</strong> {p.role}</p>}
+          {p.scope ? <p><strong>Phạm vi:</strong> {p.scope}</p> : <p class="muted">{pending}</p>}
+          {!p.role && p.scope && <p class="muted small">Vai trò cụ thể: đang bổ sung.</p>}
+        </section>
+        <section class="reveal"><h2><span>03</span>Giải pháp</h2>
+          {solution.length > 0
+            ? <ul>{solution.map((x) => <li>{x}</li>)}</ul>
+            : <p class="muted">{pending} Chưa công bố tính năng chưa được xác nhận.</p>}
+          {p.technologies.length > 0 && <div class="tags">{p.technologies.map((t) => <span class="tag">{t}</span>)}</div>}
+        </section>
+        <section class="reveal"><h2><span>04</span>Hình ảnh và video</h2>
+          <p class="muted">Chưa có ảnh hoặc video thật được phép công khai. Hình bên cạnh chỉ minh họa.</p>
+          {demo && <p><a class="btn line" href={demo} target="_blank" rel="noopener noreferrer">Dùng thử</a></p>}
+        </section>
+        <section class="reveal"><h2><span>05</span>Kết quả</h2>
+          {p.outcomes.length > 0
+            ? <ul>{p.outcomes.map((x) => <li>{x}</li>)}</ul>
+            : <p class="muted">Chưa có kết quả hoặc số liệu được xác minh nên chưa công bố.</p>}
+        </section>
+
+        <aside class="ask reveal">
+          <h2>Cần giải pháp tương tự?</h2>
+          <p class="muted">Gửi tên dự án qua Zalo để trao đổi. Bạn có thể sao chép tên và đường dẫn để gửi kèm.</p>
+          <div class="cta-row">
+            <ZaloButton label="Tư vấn làm dự án tương tự" source="project" entity={p.id} />
+            <CopyLink title={p.title} />
+          </div>
+        </aside>
+      </article>
+    </div>
   </div>
 </Base>
 
 <style>
-  .detail { max-width: 820px; padding-bottom: 24px; }
-  .detail header { margin: 8px 0 22px; }
+  /* Desktop: hình minh họa dính bên trái khi nội dung cuộn. Mobile: luồng dọc tự nhiên. */
+  .detail { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(20px, 4vw, 56px); align-items: start; padding-bottom: 24px; }
+  .side { position: sticky; top: 72px; }
+  .side-box { position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--soft); }
+  .side-box :global(.art) { border: 0; aspect-ratio: 4 / 3; }
+  .stage-note { position: absolute; left: 14px; bottom: 10px; font-size: 12px; color: var(--muted); }
+  .story header { margin-bottom: 8px; }
   .lead { font-size: 16px; color: var(--muted); }
-  .cover { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 28px; }
-  section { margin: 28px 0; }
-  .ask { margin-top: 40px; padding: 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); }
-  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+  .confirm { font-size: 13px; color: var(--muted); }
+  section { padding: 18px 0; border-top: 1px solid var(--line); }
+  section h2 { font-size: 17px; display: flex; gap: 12px; align-items: baseline; }
+  section h2 span { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .small { font-size: 13px; }
+  .ask { margin-top: 22px; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  @media (max-width: 860px) {
+    .detail { grid-template-columns: 1fr; }
+    .side { position: static; }
+  }
 </style>

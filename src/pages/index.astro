@@ -1,11 +1,10 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import ProjectCard from '../components/ProjectCard.astro';
 import Art from '../components/Art.astro';
 import ZaloButton from '../components/ZaloButton.astro';
 import profilePhoto from '../assets/profile-giang-day.png';
-import { getSettings, getFeaturedProjects, getCourses, priceLabel } from '../lib/store';
+import { getSettings, getFeaturedProjects, getCourses, getIndustries, nameOf, priceLabel } from '../lib/store';
 const s = getSettings();
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const featured = getFeaturedProjects();
@@ -14,42 +13,68 @@ const courses = getCourses();
 <Base title={s.brand} description={`${s.personName} — ${s.positioning}. Dự án thực tế và chương trình đào tạo AI ứng dụng.`}>
   <section class="hero">
     <div class="wrap hero-in">
-      <div class="hero-text reveal">
-        <p class="eyebrow">{s.personName} · Tư vấn AI & chuyển đổi số · Giảng viên</p>
-        <h1>{s.headline}</h1>
-        <p class="lead">{s.intro}</p>
-        <div class="cta-row">
+      <div class="hero-text">
+        <p class="eyebrow reveal" style="--d:0">{s.personName} · Tư vấn AI &amp; chuyển đổi số · Giảng viên</p>
+        <h1 class="reveal" style="--d:1">{s.headline}</h1>
+        <p class="lead reveal" style="--d:2">{s.intro}</p>
+        <div class="cta-row reveal" style="--d:3">
           <a class="btn" href="#du-an">Khám phá dự án</a>
           <ZaloButton label="Trao đổi bài toán của doanh nghiệp" variant="line" source="hero" />
         </div>
       </div>
-      <figure class="hero-photo reveal">
+      <figure class="hero-photo reveal" style="--d:2">
         <Image src={profilePhoto} alt="Đỗ Trường Sơn đang hướng dẫn nội dung phân tích dữ liệu trong buổi đào tạo"
-               widths={[480, 720, 960]} sizes="(max-width: 860px) 100vw, 460px" format="webp" quality={78} loading="eager" />
+               widths={[480, 720, 960]} sizes="(max-width: 860px) 100vw, 460px" format="webp" quality={78} loading="eager" data-parallax />
       </figure>
     </div>
   </section>
 
   <section id="du-an" class="section">
     <div class="wrap">
-      <div class="head-row">
+      <div class="head-row reveal">
         <div><p class="eyebrow">Dự án</p><h2>Dự án nổi bật</h2></div>
         <a class="link-arrow" href={`${base}/projects/`}>Xem tất cả dự án</a>
       </div>
-      <div class="grid">{featured.map((p) => <ProjectCard project={p} />)}</div>
-      <p class="muted note">Các dự án được giới thiệu ở mức tổng quan; chi tiết sẽ được bổ sung khi sẵn sàng.</p>
+
+      <div class="show" id="show">
+        <div class="show-stage" aria-hidden="true">
+          {featured.map((p, i) => (
+            <div class:list={['stage-item', i === 0 && 'on']} data-stage={i}>
+              <Art kind={p.art} note={false} />
+              <span class="stage-note">Hình minh họa · không phải ảnh hệ thống thật</span>
+            </div>
+          ))}
+        </div>
+        <ol class="show-list">
+          {featured.map((p, i) => (
+            <li class:list={['reveal', i === 0 && 'on']} data-item={i} style={`--d:${i}`}>
+              <a href={`${base}/projects/${p.slug}/`}>
+                <span class="num">{String(i + 1).padStart(2, '0')}</span>
+                <span class="txt">
+                  <strong>{p.title}</strong>
+                  <span class="sub">{p.summary}</span>
+                  <span class="meta">{p.industryIds.map((id) => nameOf(getIndustries(), id)).join(' · ')}</span>
+                </span>
+                <span class="go link-arrow">Xem</span>
+              </a>
+              <div class="inline-art"><Art kind={p.art} note={false} /></div>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <p class="muted note">Các dự án được giới thiệu ở mức tổng quan; hình là minh họa, chi tiết và hình ảnh thật sẽ được bổ sung khi sẵn sàng.</p>
     </div>
   </section>
 
   <section id="khoa-hoc" class="section">
     <div class="wrap">
-      <div class="head-row">
+      <div class="head-row reveal">
         <div><p class="eyebrow">Đào tạo</p><h2>Các hướng tôi đang giảng dạy</h2></div>
         <a class="link-arrow" href={`${base}/khoa-hoc/`}>Xem chi tiết</a>
       </div>
       <div class="grid">
-        {courses.map((c) => (
-          <a class="card reveal" href={`${base}/khoa-hoc/${c.slug}/`}>
+        {courses.map((c, i) => (
+          <a class="card reveal" style={`--d:${i}`} href={`${base}/khoa-hoc/${c.slug}/`}>
             <Art kind={c.art} note={false} />
             <div class="body">
               <h3>{c.title}</h3>
@@ -64,14 +89,14 @@ const courses = getCourses();
 
   <section id="gioi-thieu" class="section">
     <div class="wrap about">
-      <div>
+      <div class="reveal">
         <p class="eyebrow">Giới thiệu</p>
         <h2>{s.personName}</h2>
         <p>Tôi tư vấn giải pháp hệ thống và chuyển đổi số cho doanh nghiệp, đồng thời giảng dạy AI Automation, AI cơ bản, AI cho kế toán và AI cho dân văn phòng.</p>
         <p>Tôi bắt đầu từ công việc hằng ngày của bạn: việc nào đang lặp lại, dữ liệu nào cần nối với nhau, ai sẽ là người dùng kết quả. Sau đó tôi cùng bạn chọn bài toán, thử giải pháp và hướng dẫn cách sử dụng để áp dụng vào công việc thật.</p>
         {!s.copyApproved && <p class="muted draft-note">Bản nháp nội dung — đang chờ chủ website duyệt.</p>}
       </div>
-      <div>
+      <div class="reveal" style="--d:1">
         <h3>Kinh nghiệm</h3>
         <ul class="xp">
           <li><strong>Đào tạo và phát triển.</strong> Tôi phân tích nhu cầu, xây dựng chương trình và học liệu, trực tiếp giảng dạy và hỗ trợ học viên.</li>
@@ -84,7 +109,7 @@ const courses = getCourses();
   </section>
 
   <section id="lien-he" class="section">
-    <div class="wrap contact">
+    <div class="wrap contact reveal">
       <div>
         <h2>Bạn có một bài toán cần trao đổi?</h2>
         <p class="muted">Gửi tôi tên dự án hoặc chương trình bạn quan tâm qua Zalo. Trang web này không thu thập thông tin của bạn.</p>
@@ -97,14 +122,59 @@ const courses = getCourses();
   </section>
 </Base>
 
+<script>
+  // Sân khấu dự án: hình lớn đổi theo mục đang ở giữa màn hình, hoặc theo hover/focus. Không ghim, không chặn cuộn.
+  const stage = [...document.querySelectorAll<HTMLElement>('[data-stage]')];
+  const items = [...document.querySelectorAll<HTMLElement>('[data-item]')];
+  let current = 0;
+  function activate(i: number) {
+    if (i === current) return;
+    current = i;
+    stage.forEach((s, k) => s.classList.toggle('on', k === i));
+    items.forEach((s, k) => s.classList.toggle('on', k === i));
+  }
+  if (items.length && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) activate(Number((e.target as HTMLElement).dataset.item));
+    }, { rootMargin: '-40% 0px -45% 0px' });
+    items.forEach((it) => io.observe(it));
+  }
+  items.forEach((it, i) => {
+    it.addEventListener('mouseenter', () => activate(i));
+    it.addEventListener('focusin', () => activate(i));
+  });
+</script>
+
 <style>
   .hero { padding: clamp(20px, 3vw, 36px) 0 clamp(16px, 2.5vw, 28px); }
   .hero-in { display: grid; grid-template-columns: 1.4fr .6fr; gap: clamp(20px, 3vw, 40px); align-items: center; }
   .lead { font-size: 15.5px; color: var(--muted); max-width: 56ch; margin-bottom: 0; }
   .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
   .hero-photo { margin: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); aspect-ratio: 4 / 3; max-height: 250px; }
-  .hero-photo :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 22% 40%; }
+  .hero-photo :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 22% 40%; will-change: transform; }
   .note { font-size: 14px; margin-top: 18px; }
+
+  /* Sân khấu dự án */
+  .show { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 4vw, 48px); align-items: start; }
+  .show-stage { position: sticky; top: 72px; aspect-ratio: 4 / 3; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--soft); }
+  .stage-item { position: absolute; inset: 0; opacity: 0; display: grid; place-items: center; transition: opacity .35s ease; }
+  .stage-item.on { opacity: 1; }
+  .stage-item :global(.art) { border: 0; background: transparent; width: 100%; height: 100%; aspect-ratio: auto; }
+  .stage-item :global(.art svg) { width: 52%; }
+  .stage-note { position: absolute; left: 14px; bottom: 10px; font-size: 12px; color: var(--muted); }
+  .show-list { list-style: none; margin: 0; padding: 0; }
+  .show-list li { border-top: 1px solid var(--line); }
+  .show-list li:last-child { border-bottom: 1px solid var(--line); }
+  .show-list a { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; padding: 16px 4px; text-decoration: none; align-items: start; color: var(--muted); transition: color .18s ease; }
+  .show-list li.on a, .show-list a:hover, .show-list a:focus-visible { color: var(--ink); }
+  .num { font-size: 13px; padding-top: 3px; }
+  .txt { display: grid; gap: 2px; }
+  .txt strong { font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
+  .sub { font-size: 14px; }
+  .meta { font-size: 12.5px; color: var(--muted); }
+  .go { font-size: 14px; padding-top: 3px; }
+  .inline-art { display: none; }
+
   .about { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 4vw, 48px); }
   .xp { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
   .xp li { padding-top: 10px; border-top: 1px solid var(--line); }
@@ -112,8 +182,13 @@ const courses = getCourses();
   .contact { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
   .contact h2 { margin-bottom: 6px; }
   .contact .cta-row { margin: 0; }
+
   @media (max-width: 860px) {
-    .hero-in, .about { grid-template-columns: 1fr; }
+    .hero-in, .about, .show { grid-template-columns: 1fr; }
     .hero-photo { aspect-ratio: 16 / 9; max-height: 200px; }
+    .show-stage { display: none; }               /* mobile: luồng dọc tự nhiên, mỗi mục có hình riêng */
+    .show-list a { color: var(--ink); padding-bottom: 8px; }
+    .inline-art { display: block; margin: 0 0 14px 44px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    .inline-art :global(.art) { aspect-ratio: 16 / 6; border: 0; }
   }
 </style>
