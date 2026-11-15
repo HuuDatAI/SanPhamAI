@@ -35,7 +35,6 @@ const shortCap = (c: string) => c.split(' · ')[0];
                   <Image src={im.src} alt={im.alt} widths={[480, 768, 1200]} sizes="(max-width: 860px) 100vw, 460px" format="webp" quality={82} loading={i === 0 ? 'eager' : 'lazy'} />
                 </div>
               ))}
-              <span class="pv-tag">Minh họa</span>
             </div>
             <p class="gcap" id="gcap" aria-live="polite">{images[0].caption}</p>
             {images.length > 1 && (

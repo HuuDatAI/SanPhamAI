@@ -1,4 +1,5 @@
 import { details } from './details';
+import { courseList } from './courses';
 /**
  * Dữ liệu seed — chế độ "mẫu". Sẽ được thay bằng backend thật qua src/lib/store.ts.
  * Quy tắc nội dung (BA-004/006/007): không tên công ty/trường, không link tổ chức, không số liệu/tính năng bịa.
@@ -13,7 +14,8 @@ export interface Category { id: string; name: string; slug: string; }
 export type Verification = 'owner_confirmed' | 'illustrative';
 
 /** Lược đồ dự án thống nhất (BA-011/tệp 08). Trường chưa biết để rỗng — giao diện hiện "đang bổ sung", không tự điền. */
-export interface ProjectImage { key: string; alt: string; caption: string; sourceType: 'ai_illustration'; isIllustrative: true }
+/** Chỉ ảnh chụp THẬT đã che nhận diện bằng hình chữ nhật trắng (scripts/redact-screens.mjs). Không dùng ảnh do AI tạo. */
+export interface ProjectImage { key: string; alt: string; caption: string; sourceType: 'screenshot_redacted' }
 
 export interface Project {
   id: string; slug: string; title: string; summary: string;
@@ -38,7 +40,7 @@ export interface Project {
   /** Lưu ý công khai về giới hạn của nội dung/dự án. */
   caveats?: string[];
   /** Bộ ảnh (ảnh đầu tiên là ảnh bìa): chỉ tham chiếu khóa trong src/data/media.ts.
-   *  sourceType = ai_illustration: ảnh do AI tạo, dữ liệu mẫu — luôn hiện nhãn ngoài ảnh; isIllustrative bắt buộc true. */
+   *  sourceType = screenshot_redacted: ảnh chụp thật đã che nhận diện. */
   images?: ProjectImage[];
   /** Tiêu đề khối giải pháp (mặc định "Giải pháp"); "Hướng tiếp cận" khi chưa xác minh tính năng. */
   solutionHeading?: string;
@@ -54,6 +56,12 @@ export interface Course {
   priceMode: 'contact' | 'fixed'; priceAmount?: number;
   scheduleText: string; format?: string;
   featured: boolean; sortOrder: number; art: Kind;
+  group: string;            // id nhóm trong courses.ts
+  intro?: string;           // giới thiệu dài
+  practice?: string;        // bài thực hành
+  structure?: string;       // cấu trúc tham khảo (không phải lịch)
+  parentSlug?: string;      // nhánh của chủ đề khác
+  origin: 'owner_provided_syllabus' | 'external_reference' | 'owner_listed'; // chỉ nội bộ, không hiển thị
 }
 
 export const industries: Category[] = [
@@ -125,24 +133,7 @@ const baseProjects: Project[] = [
 
 export const projects: Project[] = baseProjects.map((p) => ({ ...p, ...(details[p.id] ?? {}) }));
 
-export const courses: Course[] = [
-  { id: 'c-automation', slug: 'ai-automation', title: 'AI Automation',
-    summary: 'AI và tự động hóa những quy trình công việc thường lặp lại.',
-    audience: [], syllabus: [], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
-    featured: true, sortOrder: 1, art: 'flow' },
-  { id: 'c-co-ban', slug: 'ai-co-ban', title: 'AI cơ bản',
-    summary: 'Làm quen và thực hành cách viết prompt, mô tả yêu cầu hiệu quả.',
-    audience: [], syllabus: [], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
-    featured: true, sortOrder: 2, art: 'prompt' },
-  { id: 'c-ke-toan', slug: 'ai-cho-ke-toan', title: 'AI cho kế toán',
-    summary: 'Ứng dụng AI trong các tác vụ kế toán thường gặp: chứng từ, bảng tính, đối chiếu.',
-    audience: ['Người làm kế toán'], syllabus: [], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
-    featured: true, sortOrder: 3, art: 'recon' },
-  { id: 'c-van-phong', slug: 'ai-cho-dan-van-phong', title: 'AI cho dân văn phòng',
-    summary: 'Ứng dụng AI vào công việc văn phòng hằng ngày: ghi chú, tài liệu, báo cáo, trình bày.',
-    audience: ['Nhân sự văn phòng'], syllabus: [], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
-    featured: true, sortOrder: 4, art: 'notes' },
-];
+export const courses: Course[] = courseList;
 
 /**
  * Cấu hình hiển thị. Zalo/QR để trống cho tới khi chủ website cung cấp:

@@ -4,9 +4,11 @@ import Scene from '../../components/Scene.astro';
 import Icon from '../../components/Icon.astro';
 import ZaloButton from '../../components/ZaloButton.astro';
 import { getCourses } from '../../lib/store';
+import { courseGroups, otherClasses } from '../../data/courses';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const topics = getCourses();
-const icons = { 'ai-automation': 'flow', 'ai-co-ban': 'prompt', 'ai-cho-ke-toan': 'calc', 'ai-cho-dan-van-phong': 'doc' } as const;
+const icons = { 'ai-automation': 'flow', 'ai-agent': 'flow', 'smax-ai-chatbot': 'prompt', 'vba-excel': 'calc', 'ai-co-ban': 'prompt', 'claude-ai-cong-viec': 'prompt', 'ai-cho-ke-toan': 'calc', 'excel-power-query-power-bi': 'calc', 'ai-cho-dan-van-phong': 'doc', 'chatgpt-hanh-chinh-ke-hoach-tai-chinh': 'doc' } as const;
+let k = 0;
 const steps = [
   { icon: 'search', t: 'Hiểu công việc', d: 'Tôi cùng bạn xác định nhu cầu thực tế, làm rõ mục tiêu và phạm vi ứng dụng AI phù hợp với công việc của bạn.' },
   { icon: 'layers', t: 'Thực hành theo tình huống', d: 'Tôi hướng dẫn bạn áp dụng AI để xử lý các công việc quen thuộc, với tình huống gần với thực tế công việc.' },
@@ -25,18 +27,27 @@ const steps = [
 
   <section class="section topics">
     <div class="wrap">
-      <div class="tgrid">
-        {topics.map((c, i) => (
-          <a class="topic reveal" style={`--d:${i % 2}`} href={`${base}/chuyen-mon/${c.slug}/`}>
-            <Scene kind={c.art} thumb depths={[0, 0, 0]} />
-            <div class="tbody">
-              <div class="thead"><span class="tn">{String(i + 1).padStart(2, '0')}</span><Icon name={icons[c.slug as keyof typeof icons] ?? 'doc'} /></div>
-              <h2>{c.title}</h2>
-              <p>{c.summary}</p>
-              <span class="link-arrow go">Tìm hiểu</span>
-            </div>
-          </a>
-        ))}
+      {courseGroups.map((g) => (
+        <div class="grp">
+          <div class="ghead reveal"><h2>{g.title}</h2><p class="muted">{g.desc}</p></div>
+          <div class="tgrid">
+            {topics.filter((c) => c.group === g.id).map((c, i) => (
+              <a class="topic reveal" style={`--d:${i % 2}`} href={`${base}/chuyen-mon/${c.slug}/`}>
+                <Scene kind={c.art} thumb depths={[0, 0, 0]} />
+                <div class="tbody">
+                  <div class="thead"><span class="tn">{String(++k).padStart(2, '0')}</span><Icon name={icons[c.slug as keyof typeof icons] ?? 'doc'} /></div>
+                  <h3>{c.title}</h3>
+                  <p>{c.summary}</p>
+                  <span class="link-arrow go">Tìm hiểu</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+      <div class="grp other reveal">
+        <div class="ghead"><h2>Các nhóm lớp khác đã hướng dẫn</h2><p class="muted">Nội dung điều chỉnh theo công việc và nhu cầu người học.</p></div>
+        <ul>{otherClasses.map((x) => <li>{x}</li>)}</ul>
       </div>
       <p class="muted note">Đây là giới thiệu các lĩnh vực tôi đang giảng dạy, chưa phải thông báo tuyển sinh; học phí và lịch học được trao đổi trực tiếp.</p>
     </div>
@@ -80,7 +91,13 @@ const steps = [
   .tbody { padding: 16px 20px 20px; display: grid; gap: 6px; }
   .thead { display: flex; align-items: center; justify-content: space-between; color: var(--muted); }
   .tn { font: 700 22px var(--display); letter-spacing: .04em; }
-  .tbody h2 { margin: 0; font-size: 20px; }
+  .tbody h3 { margin: 0; font-size: 19px; }
+  .grp { margin-top: 30px; }
+  .grp:first-child { margin-top: 0; }
+  .ghead { margin-bottom: 14px; }
+  .ghead h2 { margin: 0 0 4px; font-size: 22px; }
+  .ghead p { margin: 0; font-size: 14.5px; }
+  .other ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
   .tbody p { margin: 0; color: var(--muted); font-size: 14.5px; }
   .go { justify-self: start; margin-top: 6px; }
   .note { font-size: 13.5px; margin-top: 16px; }

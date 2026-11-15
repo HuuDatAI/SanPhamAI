@@ -4,14 +4,19 @@ import Scene from '../../components/Scene.astro';
 import Icon from '../../components/Icon.astro';
 import ZaloButton from '../../components/ZaloButton.astro';
 import CopyLink from '../../components/CopyLink.astro';
-import { getCourses, getCourse, priceLabel } from '../../lib/store';
+import { getCourses, getCourse } from '../../lib/store';
+import { courseGroups } from '../../data/courses';
 
 export function getStaticPaths() {
   return getCourses().map((c) => ({ params: { slug: c.slug } }));
 }
 const c = getCourse(Astro.params.slug!)!;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const icons = { 'ai-automation': 'flow', 'ai-co-ban': 'prompt', 'ai-cho-ke-toan': 'calc', 'ai-cho-dan-van-phong': 'doc' } as const;
+const icons = { 'ai-automation': 'flow', 'ai-agent': 'flow', 'smax-ai-chatbot': 'prompt', 'vba-excel': 'calc', 'ai-co-ban': 'prompt', 'claude-ai-cong-viec': 'prompt', 'ai-cho-ke-toan': 'calc', 'excel-power-query-power-bi': 'calc', 'ai-cho-dan-van-phong': 'doc', 'chatgpt-hanh-chinh-ke-hoach-tai-chinh': 'doc' } as const;
+const parent = c.parentSlug ? getCourse(c.parentSlug) : undefined;
+const group = courseGroups.find((g) => g.id === c.group);
+const children = getCourses().filter((x) => x.parentSlug === c.slug);
+let n = 0; const num = () => String(++n).padStart(2, '0');
 ---
 <Base title={c.title} description={c.summary}>
   <div class="wrap">
@@ -24,20 +29,20 @@ const icons = { 'ai-automation': 'flow', 'ai-co-ban': 'prompt', 'ai-cho-ke-toan'
         <header class="reveal">
           <span class="ico"><Icon name={icons[c.slug as keyof typeof icons] ?? 'doc'} size={26} /></span>
           <h1>{c.title}</h1>
-          <p class="lead">{c.summary}</p>
+          {(group || parent) && <p class="muted small crumb2">{group?.title}{parent && <> · Nhánh của <a href={`${base}/chuyen-mon/${parent.slug}/`}>{parent.title}</a></>}</p>}
+          <p class="lead">{c.intro ?? c.summary}</p>
         </header>
-        <dl class="facts reveal">
-          <div><dt>Học phí</dt><dd>{priceLabel(c)}</dd></div>
-          <div><dt>Lịch học</dt><dd>{c.scheduleText}</dd></div>
-          {c.format && <div><dt>Hình thức</dt><dd>{c.format}</dd></div>}
-        </dl>
-        {c.audience.length > 0 && <section class="reveal"><h2><span>01</span>Đối tượng phù hợp</h2><ul>{c.audience.map((a) => <li>{a}</li>)}</ul></section>}
-        {c.syllabus.length > 0 && <section class="reveal"><h2><span>{c.audience.length > 0 ? '02' : '01'}</span>Nội dung</h2><ul>{c.syllabus.map((s) => <li>{s}</li>)}</ul></section>}
-        <p class="muted small reveal">Trang này giới thiệu lĩnh vực tôi đang giảng dạy, chưa phải thông báo tuyển sinh hay cam kết về lịch khai giảng, thời lượng hoặc kết quả đầu ra.</p>
+        
+        {c.audience.length > 0 && <section class="reveal"><h2><span>{num()}</span>Đối tượng phù hợp</h2><ul>{c.audience.map((a) => <li>{a}</li>)}</ul></section>}
+        {c.syllabus.length > 0 && <section class="reveal"><h2><span>{num()}</span>Nội dung</h2><ul>{c.syllabus.map((x) => <li>{x}</li>)}</ul></section>}
+        {c.practice && <section class="reveal"><h2><span>{num()}</span>Thực hành</h2><p>{c.practice}</p></section>}
+        {c.structure && <section class="reveal"><h2><span>{num()}</span>Cấu trúc tham khảo</h2><p>{c.structure}</p></section>}
+        {children.length > 0 && <section class="reveal"><h2><span>{num()}</span>Nhánh liên quan</h2><ul>{children.map((x) => <li><a href={`${base}/chuyen-mon/${x.slug}/`}>{x.title}</a></li>)}</ul></section>}
+        <p class="muted small reveal">Trang này giới thiệu lĩnh vực tôi đang giảng dạy, chưa phải thông báo tuyển sinh. Nội dung và thời lượng được điều chỉnh theo nhu cầu; học phí và lịch học trao đổi trực tiếp, không có cam kết về kết quả đầu ra.</p>
         <aside class="ask reveal">
           <h2>Quan tâm chủ đề này?</h2>
           <div class="cta-row">
-            <ZaloButton label="Tư vấn chương trình đào tạo" variant="accent" source="course" entity={c.id} />
+            <ZaloButton label="Trao đổi nội dung học" variant="accent" source="course" entity={c.id} />
             <CopyLink title={c.title} />
           </div>
         </aside>
@@ -60,6 +65,7 @@ const icons = { 'ai-automation': 'flow', 'ai-co-ban': 'prompt', 'ai-cho-ke-toan'
   section h2 { font-size: 17px; display: flex; gap: 12px; align-items: baseline; }
   section h2 span { font-size: 12px; color: var(--muted); font-weight: 500; }
   .small { font-size: 13.5px; margin-top: 14px; }
+  .crumb2 { margin: 0 0 6px; }
   .ask { margin-top: 18px; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
   .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
   @media (max-width: 860px) { .detail { grid-template-columns: 1fr; } .side { position: static; } }

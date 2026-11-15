@@ -1,6 +1,6 @@
 ---
 /**
- * Hình đại diện dự án: ảnh bìa nếu có (luôn kèm nhãn "Minh họa" nằm NGOÀI ảnh, không mất khi cắt), nếu không thì Scene vẽ tay.
+ * Hình đại diện dự án: ảnh chụp thật đã che nếu có, nếu không thì Scene vẽ tay (không dùng ảnh AI).
  * Không có nút tải; ảnh chỉ xem (phóng to bằng hộp thoại ở trang chi tiết).
  */
 import { Image } from 'astro:assets';
@@ -14,7 +14,6 @@ const cover = coverOf(p);
 {cover ? (
   <div class:list={['pv', 'pv-photo', thumb && 'thumb']} data-tone={tone}>
     <Image src={cover.src} alt={cover.alt} widths={[480, 768, 1200, 1536]} sizes={sizes} format="webp" quality={82} loading={loading} />
-    <span class="pv-tag">Minh họa</span>
   </div>
 ) : (
   <Scene kind={p.art} tone={tone} thumb={thumb} depths={[0, 0, 0]} />

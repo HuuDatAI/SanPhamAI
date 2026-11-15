@@ -48,9 +48,8 @@ export function validateProjects(list: Project[]): string[] {
     for (const u of [p.videoUrl, p.demoUrl]) if (u && !/^https?:\/\//i.test(u)) errs.push(`${at} URL không phải http/https`);
     for (const im of p.images ?? []) {
       if (!projectImages[im.key]) errs.push(`${at} ảnh chưa đăng ký: ${im.key}`);
-      if (im.isIllustrative !== true || im.sourceType !== 'ai_illustration') errs.push(`${at} ảnh chưa có căn cứ thật phải gắn nhãn minh họa: ${im.key}`);
+      if (im.sourceType !== 'screenshot_redacted') errs.push(`${at} chỉ nhận ảnh chụp thật đã che (screenshot_redacted): ${im.key}`);
       if (!im.alt.trim() || !im.caption.trim()) errs.push(`${at} ảnh thiếu alt/chú thích: ${im.key}`);
-      if (!/minh họa/i.test(im.caption)) errs.push(`${at} chú thích ảnh phải nêu rõ minh họa: ${im.key}`);
     }
     if (p.developmentStatus && p.developmentStatus !== 'in_progress') errs.push(`${at} developmentStatus không hợp lệ`);
     const texts = [p.title, p.summary, p.problem, p.role, p.scope, ...p.solutionBlocks, ...p.features, ...p.technologies, ...p.outcomes, ...(p.observedScreens ?? []), ...(p.caveats ?? []), ...(p.images ?? []).flatMap((im) => [im.alt, im.caption])];

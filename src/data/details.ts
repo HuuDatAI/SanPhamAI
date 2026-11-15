@@ -4,7 +4,7 @@
  */
 import type { Project } from './seed';
 
-type Detail = Partial<Pick<Project, 'summary' | 'problem' | 'role' | 'scope' | 'solutionBlocks' | 'solutionHeading' | 'value' | 'cta'>>;
+type Detail = Partial<Pick<Project, 'summary' | 'problem' | 'role' | 'scope' | 'solutionBlocks' | 'solutionHeading' | 'value' | 'cta' | 'images'>>;
 
 export const details: Record<string, Detail> = {
   'p-tuyen-dung': {
@@ -54,6 +54,12 @@ export const details: Record<string, Detail> = {
     role: 'Tôi tham gia phát triển hệ thống, tập trung vào trải nghiệm học tập và các màn hình phục vụ quản trị đào tạo.',
     scope: 'Quản lý nội dung, tổ chức lộ trình và theo dõi tiến độ học.',
     solutionHeading: 'Những phần chính',
+    images: [
+      { key: 'lms-1', sourceType: 'screenshot_redacted', alt: 'Màn hình tổng quan học tập của hệ thống LMS doanh nghiệp', caption: 'Không gian học tập cá nhân (đã ẩn thông tin nhận diện)' },
+      { key: 'lms-2', sourceType: 'screenshot_redacted', alt: 'Thư viện khóa học với tìm kiếm, danh mục và thông tin từng khóa', caption: 'Tập trung nội dung đào tạo (đã ẩn thông tin nhận diện)' },
+      { key: 'lms-3', sourceType: 'screenshot_redacted', alt: 'Màn hình tổng quan quản trị đào tạo theo kỳ báo cáo', caption: 'Theo dõi hoạt động đào tạo (đã ẩn thông tin nhận diện)' },
+      { key: 'lms-4', sourceType: 'screenshot_redacted', alt: 'Màn hình quản lý lộ trình và các khóa học trong lộ trình', caption: 'Tổ chức lộ trình học (đã ẩn thông tin nhận diện)' },
+    ],
     solutionBlocks: [
       'Không gian học tập cá nhân: tổng hợp khóa đang học, khóa đã hoàn thành, thời gian học và các việc cần theo dõi; người học tiếp tục nội dung đang học và xem lịch sắp tới ngay từ màn hình tổng quan.',
       'Thư viện khóa học: trình bày khóa học theo ảnh bìa, danh mục, thời lượng và trạng thái; có tìm kiếm và bộ lọc để tiếp cận nội dung phù hợp.',
@@ -67,6 +73,13 @@ export const details: Record<string, Detail> = {
     summary: 'Tôi đang phát triển hệ thống tập trung thông tin dự án, công việc và các quy trình phối hợp trong doanh nghiệp xây dựng. Các phân hệ tiếp tục được hoàn thiện và kiểm thử.',
     problem: 'Một dự án xây dựng có nhiều đầu việc và nhiều bên cùng tham gia. Tôi hướng đến việc kết nối thông tin dự án với những quy trình phối hợp liên quan, để người phụ trách thuận tiện theo dõi bối cảnh và trạng thái công việc.',
     role: 'Tôi đang phát triển hệ thống, từ cách tổ chức thông tin dự án đến giao diện phục vụ công việc và các bước phối hợp giữa những bộ phận liên quan.',
+    images: [
+      { key: 'cons-1', sourceType: 'screenshot_redacted', alt: 'Màn hình tổng quan điều hành của hệ thống quản trị dự án xây dựng', caption: 'Tổng quan điều hành (phiên bản đang phát triển; đã ẩn thông tin nhận diện, dữ liệu thử nghiệm)' },
+      { key: 'cons-2', sourceType: 'screenshot_redacted', alt: 'Danh mục dự án dạng bảng có tìm kiếm và bộ lọc trạng thái', caption: 'Danh mục dự án (đã ẩn thông tin nhận diện, dữ liệu thử nghiệm)' },
+      { key: 'cons-3', sourceType: 'screenshot_redacted', alt: 'Màn hình chi tiết dự án với thông tin chung, tiến độ và đấu thầu', caption: 'Chi tiết dự án (đã ẩn thông tin nhận diện, dữ liệu thử nghiệm)' },
+      { key: 'cons-4', sourceType: 'screenshot_redacted', alt: 'Phân hệ đấu thầu với danh sách gói thầu và trạng thái', caption: 'Phòng đấu thầu: gói thầu (đã ẩn thông tin nhận diện, dữ liệu thử nghiệm)' },
+      { key: 'cons-5', sourceType: 'screenshot_redacted', alt: 'Phân hệ hỏi giá nhà cung cấp với các bước nạp file, tách và gán, xác nhận, theo dõi phản hồi', caption: 'Hỏi giá nhà cung cấp (đã ẩn thông tin nhận diện, dữ liệu thử nghiệm)' },
+    ],
     value: 'Tôi tiếp tục hoàn thiện các luồng nghiệp vụ và kiểm thử cách các phân hệ phối hợp, ưu tiên sự rõ ràng của thông tin và khả năng sử dụng trong công việc thực tế.',
     cta: 'Doanh nghiệp của bạn đang cần kết nối thông tin dự án và quy trình phối hợp? Trao đổi với tôi về cách các bộ phận đang làm việc và những điểm cần cải thiện.',
   },
