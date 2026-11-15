@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Scene from '../components/Scene.astro';
 import Journey from '../components/Journey.astro';
+import CourseCover from '../components/CourseCover.astro';
 import ZaloButton from '../components/ZaloButton.astro';
 import profilePhoto from '../assets/profile-giang-day.png';
 import { getSettings, getFeaturedProjects, getCourses } from '../lib/store';
@@ -47,7 +48,7 @@ const topics = allTopics.filter((c) => c.featured);
       <div class="grid">
         {topics.map((c, i) => (
           <a class="card reveal" style={`--d:${i}`} href={`${base}/chuyen-mon/${c.slug}/`}>
-            <Scene kind={c.art} thumb depths={[0, 0, 0]} />
+            <CourseCover course={c} sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 300px" />
             <div class="body"><h3>{c.title}</h3><p>{c.summary}</p></div>
           </a>
         ))}

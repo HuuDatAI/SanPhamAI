@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Scene from '../../components/Scene.astro';
+import CourseCover from '../../components/CourseCover.astro';
 import Icon from '../../components/Icon.astro';
 import ZaloButton from '../../components/ZaloButton.astro';
 import { getCourses } from '../../lib/store';
@@ -33,7 +33,7 @@ const steps = [
           <div class="tgrid">
             {topics.filter((c) => c.group === g.id).map((c, i) => (
               <a class="topic reveal" style={`--d:${i % 2}`} href={`${base}/chuyen-mon/${c.slug}/`}>
-                <Scene kind={c.art} thumb depths={[0, 0, 0]} />
+                <CourseCover course={c} sizes="(max-width: 460px) 100vw, (max-width: 760px) 50vw, 300px" loading={k < 4 ? 'eager' : 'lazy'} />
                 <div class="tbody">
                   <div class="thead"><span class="tn">{String(++k).padStart(2, '0')}</span><Icon name={icons[c.slug as keyof typeof icons] ?? 'doc'} /></div>
                   <h3>{c.title}</h3>
@@ -82,7 +82,7 @@ const steps = [
   .tgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
   .topic { display: flex; flex-direction: column; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; text-decoration: none; transition: border-color .18s ease, box-shadow .18s ease; }
   .topic:hover { border-color: var(--ink); box-shadow: 0 10px 28px rgba(11,20,36,.09); }
-  .topic :global(.scene.thumb) { aspect-ratio: 16 / 7; }
+  .topic :global(.course-cover) { border-bottom: 1px solid var(--line); }
   .tbody { padding: 12px 14px 14px; display: grid; gap: 4px; align-content: start; flex: 1; }
   .thead { display: flex; align-items: center; justify-content: space-between; color: var(--muted); }
   .tn { font: 700 16px var(--display); letter-spacing: .04em; }

@@ -1,0 +1,18 @@
+---
+/** Bìa khóa học 16:9, hiển thị nguyên khung (không crop, không kéo giãn). Thiếu bìa thì rơi về Scene vector. */
+import { Image } from 'astro:assets';
+import Scene from './Scene.astro';
+import { courseCovers } from '../data/courseCovers';
+import type { Course } from '../lib/store';
+interface Props { course: Course; sizes?: string; loading?: 'lazy' | 'eager' }
+const { course, sizes = '(max-width: 760px) 100vw, 300px', loading = 'lazy' } = Astro.props;
+const cover = courseCovers[course.slug];
+---
+{cover ? (
+  <Image class="course-cover" src={cover.src} alt={cover.alt} widths={[320, 480, 640, 960, 1280]} sizes={sizes} format="webp" quality={80} loading={loading} />
+) : (
+  <Scene kind={course.art} thumb depths={[0, 0, 0]} />
+)}
+<style is:global>
+  .course-cover { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #f5efe8; }
+</style>
