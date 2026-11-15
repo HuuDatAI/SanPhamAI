@@ -46,13 +46,14 @@ export function validateProjects(list: Project[]): string[] {
     for (const id of p.industryIds) if (!industries.some((c) => c.id === id)) errs.push(`${at} ngành không tồn tại: ${id}`);
     for (const id of p.solutionIds) if (!solutions.some((c) => c.id === id)) errs.push(`${at} loại giải pháp không tồn tại: ${id}`);
     for (const u of [p.videoUrl, p.demoUrl]) if (u && !/^https?:\/\//i.test(u)) errs.push(`${at} URL không phải http/https`);
-    if (p.cover) {
-      if (!projectImages[p.cover.key]) errs.push(`${at} ảnh bìa chưa đăng ký: ${p.cover.key}`);
-      if (p.cover.isIllustrative !== true) errs.push(`${at} ảnh bìa phải gắn nhãn minh họa`);
-      if (!p.cover.alt.trim() || !p.cover.caption.trim()) errs.push(`${at} ảnh bìa thiếu alt/chú thích`);
+    for (const im of p.images ?? []) {
+      if (!projectImages[im.key]) errs.push(`${at} ảnh chưa đăng ký: ${im.key}`);
+      if (im.isIllustrative !== true || im.sourceType !== 'ai_illustration') errs.push(`${at} ảnh chưa có căn cứ thật phải gắn nhãn minh họa: ${im.key}`);
+      if (!im.alt.trim() || !im.caption.trim()) errs.push(`${at} ảnh thiếu alt/chú thích: ${im.key}`);
+      if (!/minh họa/i.test(im.caption)) errs.push(`${at} chú thích ảnh phải nêu rõ minh họa: ${im.key}`);
     }
     if (p.developmentStatus && p.developmentStatus !== 'in_progress') errs.push(`${at} developmentStatus không hợp lệ`);
-    const texts = [p.title, p.summary, p.problem, p.role, p.scope, ...p.solutionBlocks, ...p.features, ...p.technologies, ...p.outcomes, ...(p.observedScreens ?? []), ...(p.caveats ?? []), ...(p.cover ? [p.cover.alt, p.cover.caption] : [])];
+    const texts = [p.title, p.summary, p.problem, p.role, p.scope, ...p.solutionBlocks, ...p.features, ...p.technologies, ...p.outcomes, ...(p.observedScreens ?? []), ...(p.caveats ?? []), ...(p.images ?? []).flatMap((im) => [im.alt, im.caption])];
     if (texts.some((t) => /<[a-z!\/]/i.test(t) || /javascript:/i.test(t))) errs.push(`${at} chứa HTML/script`);
   }
   return errs;
@@ -60,4 +61,5 @@ export function validateProjects(list: Project[]): string[] {
 const schemaErrors = validateProjects(projects);
 if (schemaErrors.length) throw new Error('Lược đồ dự án không hợp lệ:\n' + schemaErrors.join('\n'));
 
-export const coverOf = (p: Project) => (p.cover ? projectImages[p.cover.key] : undefined);
+export const imagesOf = (p: Project) => (p.images ?? []).map((im) => ({ ...im, src: projectImages[im.key] }));
+export const coverOf = (p: Project) => imagesOf(p)[0];
