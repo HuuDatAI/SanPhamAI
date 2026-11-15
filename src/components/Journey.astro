@@ -18,7 +18,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <div class="stage-col">
         <div class="stage" aria-hidden="true">
           {featured.map((p, i) => (
-            <div class:list={['st', i === 0 && 'on']} data-stage={i}><ProjectVisual project={p} tone="dark" sizes="560px" /></div>
+            <div class:list={['st', i === 0 && 'on']} data-stage={i}><ProjectVisual project={p} tone="dark" sizes="(max-width: 860px) 100vw, 640px" loading="eager" /></div>
           ))}
         </div>
         <div class="stepper">
