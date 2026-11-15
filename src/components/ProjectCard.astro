@@ -1,5 +1,5 @@
 ---
-import Scene from './Scene.astro';
+import ProjectVisual from './ProjectVisual.astro';
 import { getIndustries, getSolutions, nameOf } from '../lib/store';
 import type { Project } from '../lib/store';
 interface Props { project: Project; index?: number }
@@ -11,7 +11,7 @@ const search = [p.title, p.summary, ...p.technologies, ...inds, ...sols].join(' 
 ---
 <a class="card reveal" style={`--d:${index % 4}`} href={`${base}/projects/${p.slug}/`}
    data-card data-ind={p.industryIds.join(' ')} data-sol={p.solutionIds.join(' ')} data-text={search}>
-  <Scene kind={p.art} thumb depths={[0, 0, 0]} />
+  <ProjectVisual project={p} thumb sizes="(max-width: 860px) 100vw, 280px" />
   <div class="body">
     {p.developmentStatus === 'in_progress' && <span class="badge-dev">Đang phát triển</span>}
     {p.isSample && <span class="badge-sample">Minh họa</span>}

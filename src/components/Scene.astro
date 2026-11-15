@@ -16,7 +16,7 @@ const map: Record<Kind, [string, string, string]> = {
 const [a, b, c] = map[kind];
 const d = depths ?? [-0.35, 0.25, 0.8];
 ---
-<div class:list={['scene', tone, thumb && 'thumb']} role="img" aria-label="Hình minh họa, không phải ảnh chụp hệ thống thật">
+<div class:list={['scene', tone, thumb && 'thumb']} aria-hidden="true">
   {layers.includes('l0') && (
     <svg class="ly" data-depth={d[0]} viewBox="0 0 480 320" preserveAspectRatio={thumb ? 'xMidYMid slice' : 'xMidYMid meet'} aria-hidden="true">
       <rect class="p" x="28" y="26" width="318" height="216" rx="16" />

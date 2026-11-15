@@ -17,8 +17,8 @@ const icons = { 'ai-automation': 'flow', 'ai-co-ban': 'prompt', 'ai-cho-ke-toan'
   <div class="wrap">
     <nav class="crumbs" aria-label="Điều hướng phụ"><a href={`${base}/chuyen-mon/`}>← Quay lại Chuyên môn</a></nav>
     <div class="detail">
-      <aside class="side" aria-label="Hình minh họa">
-        <div class="side-box"><Scene kind={c.art} depths={[0, 0, 0]} /><span class="stage-note">Hình minh họa · không phải ảnh hệ thống thật</span></div>
+      <aside class="side">
+        <div class="side-box"><Scene kind={c.art} depths={[0, 0, 0]} /></div>
       </aside>
       <article class="story">
         <header class="reveal">
@@ -32,7 +32,7 @@ const icons = { 'ai-automation': 'flow', 'ai-co-ban': 'prompt', 'ai-cho-ke-toan'
           {c.format && <div><dt>Hình thức</dt><dd>{c.format}</dd></div>}
         </dl>
         {c.audience.length > 0 && <section class="reveal"><h2><span>01</span>Đối tượng phù hợp</h2><ul>{c.audience.map((a) => <li>{a}</li>)}</ul></section>}
-        <section class="reveal"><h2><span>{c.audience.length > 0 ? '02' : '01'}</span>Nội dung</h2><ul>{c.syllabus.map((s) => <li>{s}</li>)}</ul></section>
+        {c.syllabus.length > 0 && <section class="reveal"><h2><span>{c.audience.length > 0 ? '02' : '01'}</span>Nội dung</h2><ul>{c.syllabus.map((s) => <li>{s}</li>)}</ul></section>}
         <p class="muted small reveal">Trang này giới thiệu lĩnh vực tôi đang giảng dạy, chưa phải thông báo tuyển sinh hay cam kết về lịch khai giảng, thời lượng hoặc kết quả đầu ra.</p>
         <aside class="ask reveal">
           <h2>Quan tâm chủ đề này?</h2>

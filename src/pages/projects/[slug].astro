@@ -1,9 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { Image } from 'astro:assets';
 import Scene from '../../components/Scene.astro';
+import ProjectVisual from '../../components/ProjectVisual.astro';
 import ZaloButton from '../../components/ZaloButton.astro';
 import CopyLink from '../../components/CopyLink.astro';
-import { getProjects, getProject, getIndustries, getSolutions, nameOf, safeUrl } from '../../lib/store';
+import { getProjects, getProject, getIndustries, getSolutions, nameOf, safeUrl, coverOf } from '../../lib/store';
 
 export function getStaticPaths() {
   return getProjects().map((p) => ({ params: { slug: p.slug } }));
@@ -13,59 +15,67 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const inds = p.industryIds.map((i) => nameOf(getIndustries(), i));
 const sols = p.solutionIds.map((i) => nameOf(getSolutions(), i));
 const demo = safeUrl(p.demoUrl);
-const pending = 'Đang bổ sung.';
+let n = 0;
+const num = () => String(++n).padStart(2, '0');
 const solution = [...p.solutionBlocks, ...p.features];
 const observed = p.observedScreens ?? [];
 const caveats = p.caveats ?? [];
+const cover = coverOf(p);
 ---
 <Base title={p.title} description={p.summary}>
   <div class="wrap">
     <nav class="crumbs" aria-label="Điều hướng phụ"><a href={`${base}/projects/`}>← Quay lại danh sách dự án</a></nav>
     <div class="detail">
-      <aside class="side" aria-label="Hình minh họa">
-        <div class="side-box"><Scene kind={p.art} depths={[0, 0, 0]} /><span class="stage-note">Hình minh họa · không phải ảnh hệ thống thật</span></div>
+      <aside class="side">
+        {cover && p.cover ? (
+          <figure class="cover-fig">
+            <div class="side-box"><ProjectVisual project={p} sizes="(max-width: 860px) 100vw, 460px" loading="eager" /></div>
+            <figcaption>{p.cover.caption}</figcaption>
+            <button type="button" class="btn line zoom" id="zoomBtn" aria-haspopup="dialog">Phóng to ảnh</button>
+          </figure>
+        ) : (
+          <div class="side-box"><Scene kind={p.art} depths={[0, 0, 0]} /></div>
+        )}
       </aside>
 
       <article class="story">
         <header class="reveal">
           <div class="badges">
             {p.developmentStatus === 'in_progress' && <span class="badge-dev">Đang phát triển</span>}
-            {p.isSample
-              ? <span class="badge-sample">Minh họa</span>
-              : <span class="confirm">Phạm vi do chủ website xác nhận · chi tiết đang bổ sung</span>}
+            {p.isSample && <span class="badge-sample">Minh họa</span>}
           </div>
           <h1>{p.title}</h1>
           <p class="lead">{p.summary}</p>
           <div class="tags">{[...inds, ...sols].map((n) => <span class="tag">{n}</span>)}</div>
         </header>
 
-        <section class="reveal"><h2><span>01</span>Bài toán</h2><p class:list={[!p.problem && 'muted']}>{p.problem || pending}</p></section>
-        <section class="reveal"><h2><span>02</span>Vai trò và phạm vi</h2>
-          {p.role && <p><strong>Vai trò:</strong> {p.role}</p>}
-          {p.scope ? <p><strong>Phạm vi:</strong> {p.scope}</p> : <p class="muted">{pending}</p>}
-          {!p.role && p.scope && <p class="muted small">Vai trò cụ thể: đang bổ sung.</p>}
-        </section>
-        <section class="reveal"><h2><span>03</span>Giải pháp</h2>
-          {solution.length > 0 && <ul>{solution.map((x) => <li>{x}</li>)}</ul>}
-          {observed.length > 0 && (
-            <div>
-              <p class="obs-lead"><strong>Các màn hình phiên bản hiện tại đã có</strong> <span class="muted">(đã xem giao diện, chưa kiểm thử đầy đủ chức năng):</span></p>
-              <ul>{observed.map((x) => <li>{x}</li>)}</ul>
-            </div>
-          )}
-          {solution.length === 0 && observed.length === 0 && <p class="muted">{pending} Chưa công bố tính năng chưa được xác nhận.</p>}
-          {caveats.length > 0 && <ul class="caveats">{caveats.map((x) => <li>{x}</li>)}</ul>}
-          {p.technologies.length > 0 && <div class="tags">{p.technologies.map((t) => <span class="tag">{t}</span>)}</div>}
-        </section>
-        <section class="reveal"><h2><span>04</span>Hình ảnh và video</h2>
-          <p class="muted">Chưa có ảnh hoặc video thật được phép công khai. Hình bên cạnh chỉ minh họa.</p>
-          {demo && <p><a class="btn line" href={demo} target="_blank" rel="noopener noreferrer">Dùng thử</a></p>}
-        </section>
-        <section class="reveal"><h2><span>05</span>Kết quả</h2>
-          {p.outcomes.length > 0
-            ? <ul>{p.outcomes.map((x) => <li>{x}</li>)}</ul>
-            : <p class="muted">Chưa có kết quả hoặc số liệu được xác minh nên chưa công bố.</p>}
-        </section>
+        {p.problem && <section class="reveal"><h2><span>{num()}</span>Bài toán</h2><p>{p.problem}</p></section>}
+        {(p.role || p.scope) && (
+          <section class="reveal"><h2><span>{num()}</span>Vai trò và phạm vi</h2>
+            {p.role && <p><strong>Vai trò:</strong> {p.role}</p>}
+            {p.scope && <p><strong>Phạm vi:</strong> {p.scope}</p>}
+          </section>
+        )}
+        {(solution.length > 0 || observed.length > 0 || caveats.length > 0 || p.technologies.length > 0) && (
+          <section class="reveal"><h2><span>{num()}</span>Giải pháp</h2>
+            {solution.length > 0 && <ul>{solution.map((x) => <li>{x}</li>)}</ul>}
+            {observed.length > 0 && (
+              <div>
+                <p class="obs-lead"><strong>Các màn hình phiên bản hiện tại đã có:</strong></p>
+                <ul>{observed.map((x) => <li>{x}</li>)}</ul>
+              </div>
+            )}
+            {caveats.length > 0 && <ul class="caveats">{caveats.map((x) => <li>{x}</li>)}</ul>}
+            {p.technologies.length > 0 && <div class="tags">{p.technologies.map((t) => <span class="tag">{t}</span>)}</div>}
+          </section>
+        )}
+        {(demo || cover) && (
+          <section class="reveal"><h2><span>{num()}</span>Hình ảnh và video</h2>
+            {cover && p.cover && <p class="muted">{p.cover.caption}</p>}
+            {demo && <p><a class="btn line" href={demo} target="_blank" rel="noopener noreferrer">Dùng thử</a></p>}
+          </section>
+        )}
+        {p.outcomes.length > 0 && <section class="reveal"><h2><span>{num()}</span>Kết quả</h2><ul>{p.outcomes.map((x) => <li>{x}</li>)}</ul></section>}
 
         <aside class="ask reveal">
           <h2>Cần giải pháp tương tự?</h2>
@@ -78,13 +88,35 @@ const caveats = p.caveats ?? [];
       </article>
     </div>
   </div>
+  {cover && p.cover && (
+    <dialog id="zoomDlg" class="zoom-dlg" aria-label="Ảnh minh họa phóng to">
+      <div class="zoom-bar"><span>{p.cover.caption}</span><button type="button" class="btn line" id="zoomClose">Đóng</button></div>
+      <div class="zoom-body"><Image src={cover} alt={p.cover.alt} widths={[1200, 1536]} sizes="(max-width: 1200px) 96vw, 1200px" format="webp" quality={86} loading="lazy" /></div>
+    </dialog>
+  )}
 </Base>
+
+<script>
+  const dlg = document.getElementById('zoomDlg') as HTMLDialogElement | null;
+  const open = document.getElementById('zoomBtn');
+  open?.addEventListener('click', () => dlg?.showModal());
+  document.getElementById('zoomClose')?.addEventListener('click', () => dlg?.close());
+  dlg?.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+</script>
 
 <style>
   /* Desktop: hình minh họa dính bên trái khi nội dung cuộn. Mobile: luồng dọc tự nhiên. */
   .detail { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(20px, 4vw, 56px); align-items: start; padding-bottom: 24px; }
   .side { position: sticky; top: 72px; }
   .side-box { position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--soft); }
+  .cover-fig { margin: 0; }
+  .cover-fig figcaption { font-size: 13px; color: var(--muted); margin: 8px 2px 10px; }
+  .zoom { min-height: 40px; }
+  .zoom-dlg { border: 0; border-radius: 14px; padding: 0; width: min(1240px, 96vw); background: var(--paper); color: var(--ink); }
+  .zoom-dlg::backdrop { background: rgba(11,20,36,.72); }
+  .zoom-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+  .zoom-body { overflow: auto; max-height: calc(92vh - 64px); }
+  .zoom-body :global(img) { width: 100%; height: auto; }
   .side-box :global(.scene) { background: linear-gradient(160deg, #e9f0fb, #f5f7fa); }
   .stage-note { position: absolute; left: 14px; bottom: 10px; font-size: 12px; color: var(--muted); }
   .story header { margin-bottom: 8px; }

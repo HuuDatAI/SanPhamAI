@@ -1,8 +1,7 @@
 /**
  * Dữ liệu seed — chế độ "mẫu". Sẽ được thay bằng backend thật qua src/lib/store.ts.
  * Quy tắc nội dung (BA-004/006/007): không tên công ty/trường, không link tổ chức, không số liệu/tính năng bịa.
- * - Mục có `isSample: true` là dữ liệu minh họa và luôn hiện nhãn "Minh họa".
- * - Mục thật chỉ có mô tả ở mức đã xác nhận; phần còn thiếu hiển thị "đang bổ sung".
+ * - Trường chưa có nội dung thì để rỗng; giao diện ẩn mục đó (không điền thay).
  */
 
 export type Kind = 'funnel' | 'people' | 'chat' | 'lms' | 'building' | 'sheet' | 'cards' | 'calendar' | 'flow' | 'prompt' | 'recon' | 'notes';
@@ -35,6 +34,8 @@ export interface Project {
   observedScreens?: string[];
   /** Lưu ý công khai về giới hạn của nội dung/dự án. */
   caveats?: string[];
+  /** Ảnh bìa: chỉ tham chiếu khóa trong src/data/media.ts. isIllustrative bắt buộc true cho tới khi có ảnh thật được phép công khai. */
+  cover?: { key: string; alt: string; caption: string; isIllustrative: true };
 }
 
 export interface Course {
@@ -64,11 +65,21 @@ export const solutions: Category[] = [
 
 export const projects: Project[] = [
   {
-    id: 'p-tuyen-dung', slug: 'ai-ho-tro-tuyen-dung', title: 'AI hỗ trợ tuyển dụng',
-    summary: 'Giải pháp AI hỗ trợ công việc tuyển dụng.',
-    industryIds: ['ind-nhan-su'], solutionIds: ['sol-ai'], technologies: [], features: [],
-    verification: 'owner_confirmed', problem: '', role: '', scope: 'Giải pháp AI hỗ trợ công việc tuyển dụng.', solutionBlocks: [], outcomes: [],
+    id: 'p-tuyen-dung', slug: 'he-thong-ho-tro-tuyen-dung', title: 'Hệ thống hỗ trợ tuyển dụng với AI & tự động hóa',
+    summary: 'Tôi phát triển hệ thống hỗ trợ quản lý tuyển dụng, phân tích hồ sơ ứng viên và điều phối lịch phỏng vấn.',
+    industryIds: ['ind-nhan-su'], solutionIds: ['sol-ai', 'sol-tu-dong'], technologies: [], features: [],
+    verification: 'owner_confirmed', problem: '', role: '',
+    scope: 'Hệ thống hỗ trợ quản lý tuyển dụng, phân tích hồ sơ ứng viên và điều phối lịch phỏng vấn.', solutionBlocks: [], outcomes: [],
     featured: true, sortOrder: 1, isSample: false, art: 'people', motionPreset: 'narrative',
+    caveats: [
+      'Hướng thiết kế: AI hỗ trợ tổng hợp và đối chiếu hồ sơ theo tiêu chí công việc có dẫn chứng; người làm nhân sự xem xét và quyết định. Không tự động loại hay tuyển ứng viên.',
+    ],
+    cover: {
+      key: 'recruitment-concept',
+      alt: 'Giao diện minh họa quản lý ứng viên, đối chiếu hồ sơ theo tiêu chí công việc và lịch phỏng vấn',
+      caption: 'Giao diện minh họa — không phải ảnh hệ thống thực tế',
+      isIllustrative: true,
+    },
   },
   {
     id: 'p-ban-hang', slug: 'ai-phan-tich-hieu-qua-ban-hang', title: 'AI phân tích hiệu quả bán hàng',
@@ -105,53 +116,25 @@ export const projects: Project[] = [
       'Phân hệ đấu thầu: bảng gói thầu và trạng thái',
       'Phân hệ hỏi giá nhà cung cấp: bảng yêu cầu báo giá và trạng thái',
     ],
-    caveats: [
-      'Hệ thống đang phát triển; một số phân hệ chưa hoàn thiện.',
-      'Mô tả dựa trên các màn hình đã có; chưa công bố chức năng nào là đã kiểm thử đầy đủ.',
-      'Chưa công bố tích hợp AI, đăng nhập một lần hay kết nối kho tài liệu vì chưa được xác minh.',
-    ],
-  },
-  // ---- Dữ liệu minh họa (không phải dự án đã thực hiện) ----
-  {
-    id: 's-quy', slug: 'mau-so-quy-thu-chi', title: 'Sổ quỹ thu chi nội bộ',
-    summary: 'Ví dụ minh họa: nhập phiếu thu, phiếu chi và tự tính tồn quỹ.',
-    industryIds: ['ind-ke-toan'], solutionIds: ['sol-du-lieu'], technologies: ['Google Sheets'], features: [],
-    verification: 'illustrative', problem: '', role: '', scope: '', solutionBlocks: [], outcomes: [],
-    featured: false, sortOrder: 6, isSample: true, art: 'sheet', motionPreset: 'subtle',
-  },
-  {
-    id: 's-noi-dung', slug: 'mau-lich-noi-dung', title: 'Lịch nội dung mạng xã hội',
-    summary: 'Ví dụ minh họa: lên lịch bài đăng theo kênh và theo trạng thái duyệt.',
-    industryIds: ['ind-tmdt'], solutionIds: ['sol-tu-dong'], technologies: ['Google Sheets'], features: [],
-    verification: 'illustrative', problem: '', role: '', scope: '', solutionBlocks: [], outcomes: [],
-    featured: false, sortOrder: 7, isSample: true, art: 'calendar', motionPreset: 'subtle',
-  },
-  {
-    id: 's-van-ban', slug: 'mau-theo-doi-van-ban', title: 'Sổ theo dõi văn bản đến – đi',
-    summary: 'Ví dụ minh họa: vào sổ văn bản và theo dõi hạn xử lý.',
-    industryIds: ['ind-van-phong'], solutionIds: ['sol-he-thong'], technologies: ['Google Sheets'], features: [],
-    verification: 'illustrative', problem: '', role: '', scope: '', solutionBlocks: [], outcomes: [],
-    featured: false, sortOrder: 8, isSample: true, art: 'cards', motionPreset: 'subtle',
   },
 ];
 
-const dangBoSung = 'Nội dung chương trình chi tiết đang được bổ sung.';
 export const courses: Course[] = [
   { id: 'c-automation', slug: 'ai-automation', title: 'AI Automation',
     summary: 'AI và tự động hóa những quy trình công việc thường lặp lại.',
-    audience: [], syllabus: [dangBoSung], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
+    audience: [], syllabus: [], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
     featured: true, sortOrder: 1, art: 'flow' },
   { id: 'c-co-ban', slug: 'ai-co-ban', title: 'AI cơ bản',
     summary: 'Làm quen và thực hành cách viết prompt, mô tả yêu cầu hiệu quả.',
-    audience: [], syllabus: [dangBoSung], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
+    audience: [], syllabus: [], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
     featured: true, sortOrder: 2, art: 'prompt' },
   { id: 'c-ke-toan', slug: 'ai-cho-ke-toan', title: 'AI cho kế toán',
     summary: 'Ứng dụng AI trong các tác vụ kế toán thường gặp: chứng từ, bảng tính, đối chiếu.',
-    audience: ['Người làm kế toán'], syllabus: [dangBoSung], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
+    audience: ['Người làm kế toán'], syllabus: [], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
     featured: true, sortOrder: 3, art: 'recon' },
   { id: 'c-van-phong', slug: 'ai-cho-dan-van-phong', title: 'AI cho dân văn phòng',
     summary: 'Ứng dụng AI vào công việc văn phòng hằng ngày: ghi chú, tài liệu, báo cáo, trình bày.',
-    audience: ['Nhân sự văn phòng'], syllabus: [dangBoSung], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
+    audience: ['Nhân sự văn phòng'], syllabus: [], priceMode: 'contact', scheduleText: 'Liên hệ để trao đổi lịch học',
     featured: true, sortOrder: 4, art: 'notes' },
 ];
 
@@ -166,7 +149,7 @@ export const settings = {
   positioning: 'Tư vấn giải pháp AI & chuyển đổi số · Giảng viên AI ứng dụng',
   headline: 'Từ bài toán vận hành đến hệ thống AI ứng dụng.',
   intro: 'Bạn đang có việc lặp lại mỗi ngày, báo cáo làm tay, dữ liệu nằm rải rác? Tôi cùng bạn chọn bài toán, thử giải pháp AI phù hợp và hướng dẫn đội ngũ dùng được trong công việc thật.',
-  copyApproved: false, // BA-008: bản copy profile chờ chủ website duyệt
+  copyApproved: true, // chủ website đã duyệt nội dung profile (yêu cầu 16/11)
   zaloUrl: import.meta.env.PUBLIC_ZALO_URL ?? '',
   zaloQr: import.meta.env.PUBLIC_ZALO_QR ?? '',
 };

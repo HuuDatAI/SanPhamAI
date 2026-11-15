@@ -1,6 +1,6 @@
 ---
 /** Khu "Dự án nổi bật": nền tối, hình lớn đổi theo mục đang xem, thước tiến trình 01–NN. Dùng chung trang chủ và trang Dự án. */
-import Scene from './Scene.astro';
+import ProjectVisual from './ProjectVisual.astro';
 import { getIndustries, nameOf } from '../lib/store';
 import type { Project } from '../lib/store';
 interface Props { featured: Project[]; id?: string; flush?: boolean }
@@ -18,9 +18,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <div class="stage-col">
         <div class="stage" aria-hidden="true">
           {featured.map((p, i) => (
-            <div class:list={['st', i === 0 && 'on']} data-stage={i}><Scene kind={p.art} tone="dark" depths={[0, 0, 0]} /></div>
+            <div class:list={['st', i === 0 && 'on']} data-stage={i}><ProjectVisual project={p} tone="dark" sizes="560px" /></div>
           ))}
-          <span class="stage-note">Hình minh họa · không phải ảnh hệ thống thật</span>
         </div>
         <div class="stepper">
           <button type="button" id="prev" aria-label="Dự án trước">‹</button>
@@ -38,7 +37,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
               <p class="meta">{p.industryIds.map((x) => nameOf(getIndustries(), x)).join(' · ')}</p>
               <a class="link-arrow more" href={`${base}/projects/${p.slug}/`}>Xem dự án<span class="sr"> {p.title}</span></a>
             </div>
-            <div class="inline-scene"><Scene kind={p.art} tone="dark" depths={[0, 0, 0]} thumb /></div>
+            <div class="inline-scene"><ProjectVisual project={p} tone="dark" thumb sizes="100vw" /></div>
           </li>
         ))}
       </ol>

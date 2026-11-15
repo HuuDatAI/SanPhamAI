@@ -1,5 +1,5 @@
 ---
-import { getSettings, mode } from '../lib/store';
+import { getSettings } from '../lib/store';
 import ZaloButton from '../components/ZaloButton.astro';
 interface Props { title: string; description?: string; noindex?: boolean; hero?: boolean }
 const { title, description = 'Dự án AI & chuyển đổi số, chương trình đào tạo AI ứng dụng.', noindex = false, hero = false } = Astro.props;
@@ -39,9 +39,6 @@ const nav = [
 </head>
 <body>
   <a class="skip" href="#main">Bỏ qua điều hướng</a>
-  {mode === 'mau' && (
-    <p class="mode-bar" role="note">Bản xem trước · dữ liệu mẫu; hình vẽ là minh họa, không phải ảnh hệ thống thật.</p>
-  )}
   <header class:list={['top', hero && 'over-hero']} id="top">
     <div class="wrap bar">
       <a class="brand" href={`${base}/`} aria-label={`${s.brand} — trang chủ`}>{s.brand}</a>
