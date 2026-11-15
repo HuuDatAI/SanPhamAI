@@ -86,4 +86,10 @@ export const courseList: Course[] = [
     practice: 'Thực hành: tạo bộ báo cáo từ dữ liệu mẫu, từ bước làm sạch đến dashboard và cập nhật kỳ mới.',
     structure: 'Chương trình tham khảo: 11 buổi, 3 nhóm (Excel nền; xử lý và phân tích; dashboard và trình bày); điều chỉnh theo nhu cầu.',
     ...common, featured: false, sortOrder: 10, art: 'sheet' },
+  { id: 'c-looker', slug: 'looker-studio-dashboard', title: 'Looker Studio — Dashboard báo cáo', group: 'du-lieu', origin: 'owner_listed',
+    summary: 'Xây dựng dashboard báo cáo trên Looker Studio: kết nối dữ liệu, thiết kế biểu đồ, bộ lọc và trình bày cho người quản lý.',
+    intro: 'Tôi hướng dẫn xây dựng dashboard báo cáo trên Looker Studio: từ dữ liệu nguồn như Google Sheets đến các thẻ chỉ số, biểu đồ và bộ lọc để người quản lý theo dõi tình hình theo thời gian, đơn vị và nhóm. Hình bên là ví dụ giao diện một dashboard.',
+    audience: ['Người làm báo cáo, vận hành, nhân sự, kinh doanh và kế toán cần trình bày số liệu cho người quản lý'], syllabus: [],
+    practice: 'Nội dung điều chỉnh theo công việc và nhu cầu người học.',
+    ...common, featured: false, sortOrder: 11, art: 'sheet' },
 ];
