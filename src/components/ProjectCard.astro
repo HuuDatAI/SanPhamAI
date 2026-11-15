@@ -1,0 +1,25 @@
+---
+import ProjectVisual from './ProjectVisual.astro';
+import { getIndustries, getSolutions, nameOf } from '../lib/store';
+import type { Project } from '../lib/store';
+interface Props { project: Project; index?: number }
+const { project: p, index = 0 } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const inds = p.industryIds.map((i) => nameOf(getIndustries(), i));
+const sols = p.solutionIds.map((i) => nameOf(getSolutions(), i));
+const search = [p.title, p.summary, ...p.technologies, ...inds, ...sols].join(' ');
+---
+<a class="card reveal" style={`--d:${index % 4}`} href={`${base}/projects/${p.slug}/`}
+   data-card data-ind={p.industryIds.join(' ')} data-sol={p.solutionIds.join(' ')} data-text={search}>
+  <ProjectVisual project={p} thumb sizes="(max-width: 860px) 100vw, 280px" />
+  <div class="body">
+    {p.developmentStatus === 'in_progress' && <span class="badge-dev">Đang phát triển</span>}
+    {p.isSample && <span class="badge-sample">Minh họa</span>}
+    <h3>{p.title}</h3>
+    <p>{p.summary}</p>
+    <div class="tags">
+      {inds.map((n) => <span class="tag">{n}</span>)}
+      {sols.map((n) => <span class="tag">{n}</span>)}
+    </div>
+  </div>
+</a>

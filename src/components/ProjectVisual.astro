@@ -1,0 +1,26 @@
+---
+/**
+ * Hình đại diện dự án: ảnh chụp thật đã che nếu có, nếu không thì Scene vẽ tay (không dùng ảnh AI).
+ * Không có nút tải; ảnh chỉ xem (phóng to bằng hộp thoại ở trang chi tiết).
+ */
+import { Image } from 'astro:assets';
+import Scene from './Scene.astro';
+import { coverOf } from '../lib/store';
+import type { Project } from '../lib/store';
+interface Props { project: Project; tone?: 'light' | 'dark'; thumb?: boolean; sizes?: string; loading?: 'lazy' | 'eager' }
+const { project: p, tone = 'light', thumb = false, sizes = '(max-width: 860px) 100vw, 560px', loading = 'lazy' } = Astro.props;
+const cover = coverOf(p);
+---
+{cover ? (
+  <div class:list={['pv', 'pv-photo', thumb && 'thumb']} data-tone={tone}>
+    <Image src={cover.src} alt={cover.alt} widths={[480, 768, 1200, 1536]} sizes={sizes} format="webp" quality={82} loading={loading} />
+  </div>
+) : (
+  <Scene kind={p.art} tone={tone} thumb={thumb} depths={[0, 0, 0]} />
+)}
+<style is:global>
+  .pv-photo { position: relative; width: 100%; aspect-ratio: 3 / 2; overflow: hidden; background: #f3f6fb; }
+  .pv-photo.thumb { aspect-ratio: 16 / 8; }
+  .pv-photo img { width: 100%; height: 100%; object-fit: cover; object-position: left top; }
+  @media (max-width: 860px) { .pv-photo.thumb { aspect-ratio: 16 / 7; } }
+</style>

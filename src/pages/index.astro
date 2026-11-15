@@ -1,0 +1,112 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Scene from '../components/Scene.astro';
+import Journey from '../components/Journey.astro';
+import ZaloButton from '../components/ZaloButton.astro';
+import profilePhoto from '../assets/profile-giang-day.png';
+import { getSettings, getFeaturedProjects, getCourses } from '../lib/store';
+const s = getSettings();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const featured = getFeaturedProjects();
+const allTopics = getCourses();
+const topics = allTopics.filter((c) => c.featured);
+---
+<Base title={s.brand} description={`${s.personName} — ${s.positioning}. Dự án thực tế và chương trình đào tạo AI ứng dụng.`} hero>
+  <section class="hero" data-scene>
+    <div class="ghost" aria-hidden="true" data-depth="-0.5">STECH</div>
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <p class="eyebrow reveal" style="--d:0">{s.personName} · Tư vấn AI &amp; chuyển đổi số · Giảng viên</p>
+        <h1 class="reveal" style="--d:1">{s.headline}</h1>
+        <p class="lead reveal" style="--d:2">{s.intro}</p>
+        <div class="cta-row reveal" style="--d:3">
+          <a class="btn accent" href={`${base}/projects/`}>Khám phá dự án</a>
+          <ZaloButton label="Liên hệ trao đổi" variant="line" source="home-hero" />
+        </div>
+      </div>
+      <div class="hero-visual reveal" style="--d:2">
+        <figure class="photo">
+          <Image src={profilePhoto} alt="Đỗ Trường Sơn đang hướng dẫn nội dung phân tích dữ liệu trong buổi đào tạo"
+                 widths={[480, 720, 960]} sizes="(max-width: 860px) 100vw, 520px" format="webp" quality={78} loading="eager" data-depth="0.3" />
+        </figure>
+        <div class="float f1"><Scene kind="chat" layers={['l1']} depths={[0, 0.9, 0]} /></div>
+        <div class="float f2"><Scene kind="funnel" layers={['l2']} depths={[0, 0, 1.2]} /></div>
+      </div>
+    </div>
+  </section>
+
+  <Journey featured={featured} id="du-an" />
+
+  <section id="chuyen-mon" class="section">
+    <div class="wrap">
+      <div class="head-row reveal">
+        <div><p class="eyebrow">Chuyên môn</p><h2>Các chủ đề tôi đang giảng dạy</h2></div>
+        <a class="link-arrow" href={`${base}/chuyen-mon/`}>Xem tất cả {allTopics.length} chủ đề</a>
+      </div>
+      <div class="grid">
+        {topics.map((c, i) => (
+          <a class="card reveal" style={`--d:${i}`} href={`${base}/chuyen-mon/${c.slug}/`}>
+            <Scene kind={c.art} thumb depths={[0, 0, 0]} />
+            <div class="body"><h3>{c.title}</h3><p>{c.summary}</p></div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="gioi-thieu" class="section about">
+    <div class="wrap about-in reveal">
+      <div>
+        <p class="eyebrow">Giới thiệu</p>
+        <h2>{s.personName}</h2>
+        <p>Tôi tư vấn giải pháp hệ thống và chuyển đổi số cho doanh nghiệp, đồng thời giảng dạy AI ứng dụng cho người đi làm: tự động hóa, trợ lý AI, Excel và báo cáo, AI cho kế toán và văn phòng.</p>
+        <ul class="marks"><li><strong>7 năm</strong> đảm nhiệm các vị trí quản lý trong lĩnh vực công nghệ, kinh doanh, thương mại điện tử và marketing</li><li><strong>6 năm</strong> kinh nghiệm đào tạo</li></ul>
+        <p><a class="link-arrow" href={`${base}/gioi-thieu/`}>Đọc phần giới thiệu đầy đủ</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dark closing">
+    <div class="wrap contact reveal">
+      <div><h2>Bạn có một bài toán cần trao đổi?</h2><p class="muted">Gửi tôi tên dự án hoặc chủ đề bạn quan tâm qua Zalo. Trang web không có biểu mẫu thu thập thông tin liên hệ.</p></div>
+      <div class="cta-row">
+        <ZaloButton label="Trao đổi qua Zalo" variant="accent" source="home-contact" />
+        <a class="btn light" href={`${base}/lien-he/`}>Cách liên hệ</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .marks { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 6px; font-size: 15px; }
+  .marks strong { font: 700 20px var(--display); margin-right: 6px; }
+  .hero { position: relative; overflow: hidden; padding: 108px 0 64px;
+    background: radial-gradient(760px 320px at 76% 38%, rgba(255,255,255,.95), transparent 70%), linear-gradient(180deg, #b9d2f6 0%, #d6e5fa 52%, var(--bg) 100%); }
+  .ghost { position: absolute; left: 50%; top: 44px; transform: translateX(-50%); z-index: 0; font: 700 clamp(120px, 18vw, 260px)/.95 var(--display); letter-spacing: .04em; color: rgba(255,255,255,.96); white-space: nowrap; pointer-events: none; user-select: none;
+    -webkit-mask-image: linear-gradient(180deg, #000 58%, transparent 100%); mask-image: linear-gradient(180deg, #000 58%, transparent 100%); }
+  .hero-in { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(16px, 3vw, 44px); align-items: center; }
+  .lead { font-size: 15.5px; color: #2f3b54; max-width: 48ch; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .hero-visual { position: relative; }
+  .photo { margin: 0; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,.7); aspect-ratio: 4 / 3; box-shadow: 0 22px 48px rgba(11,20,36,.2); }
+  .photo :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 22% 40%; scale: 1.06; will-change: transform; }
+  .float { position: absolute; }
+  .float.f1 { left: -9%; bottom: -12%; width: 46%; }
+  .float.f2 { right: -4%; top: -10%; width: 42%; }
+  .about { background: var(--paper); }
+  .about-in { max-width: 760px; }
+  .draft-note { font-size: 13px; }
+  .closing { border-top: 1px solid var(--navy-line); }
+  .contact { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .contact h2 { margin-bottom: 6px; }
+  .contact .cta-row { margin: 0; }
+  @media (max-width: 860px) {
+    .hero { padding: 120px 0 48px; }
+    .ghost { top: 100px; font-size: clamp(96px, 28vw, 170px); }
+    .hero-in { grid-template-columns: 1fr; }
+    .photo { aspect-ratio: 16 / 10; }
+    .float.f1 { left: -2%; bottom: -10%; width: 44%; }
+    .float.f2 { right: -2%; top: -8%; width: 40%; }
+  }
+</style>

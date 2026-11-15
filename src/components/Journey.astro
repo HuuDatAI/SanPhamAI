@@ -1,0 +1,142 @@
+---
+/** Khu "Dự án nổi bật": nền tối, hình lớn đổi theo mục đang xem, thước tiến trình 01–NN. Dùng chung trang chủ và trang Dự án. */
+import ProjectVisual from './ProjectVisual.astro';
+import { getIndustries, nameOf } from '../lib/store';
+import type { Project } from '../lib/store';
+interface Props { featured: Project[]; id?: string; flush?: boolean }
+const { featured, id = 'noi-bat', flush = false } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<section id={id} data-journey class:list={['section', 'dark', 'journey', flush && 'flush']}>
+  <div class="wrap">
+    <div class="head-row reveal">
+      <div><p class="eyebrow">Dự án nổi bật</p><h2>Năm hướng giải pháp</h2></div>
+      <p class="muted pos" aria-live="polite"><span>01</span> / {pad(featured.length)}</p>
+    </div>
+    <div class="show" id="show">
+      <div class="stage-col">
+        <div class="stage" aria-hidden="true">
+          {featured.map((p, i) => (
+            <div class:list={['st', i === 0 && 'on']} data-stage={p.id}><ProjectVisual project={p} tone="dark" sizes="(max-width: 860px) 100vw, 640px" loading="eager" /></div>
+          ))}
+        </div>
+        <div class="stepper">
+          <button type="button" id="prev" aria-label="Dự án trước">‹</button>
+          <button type="button" id="next" aria-label="Dự án tiếp theo">›</button>
+        </div>
+      </div>
+      <ol class="list" id="flist">
+        <span class="rail" aria-hidden="true"><i id="dot"></i></span>
+        {featured.map((p, i) => (
+          <li class:list={['reveal', i === 0 && 'on']} data-item={p.id} style={`--d:${i}`}>
+            <span class="num">{pad(i + 1)}</span>
+            <div class="txt">
+              <h3><a href={`${base}/projects/${p.slug}/`}>{p.title}</a>{p.developmentStatus === 'in_progress' && <span class="badge-dev inl">Đang phát triển</span>}</h3>
+              <p>{p.summary}</p>
+              <p class="meta">{p.industryIds.map((x) => nameOf(getIndustries(), x)).join(' · ')}</p>
+              <a class="link-arrow more" href={`${base}/projects/${p.slug}/`}>Xem dự án<span class="sr"> {p.title}</span></a>
+            </div>
+            <div class="inline-scene"><ProjectVisual project={p} tone="dark" thumb sizes="100vw" /></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Một nguồn sự thật: activeId. Ảnh, tiêu đề/số, bộ đếm và chấm cam đều cập nhật trong cùng một hàm.
+  document.querySelectorAll<HTMLElement>('[data-journey]').forEach((root) => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const stages = [...root.querySelectorAll<HTMLElement>('[data-stage]')];
+    const items = [...root.querySelectorAll<HTMLElement>('[data-item]')];
+    const posNow = root.querySelector<HTMLElement>('.pos span');
+    const dot = root.querySelector<HTMLElement>('.rail i');
+    const flist = root.querySelector<HTMLElement>('.list');
+    let activeId = '';
+    function placeDot() {
+      const it = items.find((x) => x.dataset.item === activeId);
+      const num = it?.querySelector<HTMLElement>('.num');
+      if (!dot || !flist || !num) return;
+      const y = num.getBoundingClientRect().top - flist.getBoundingClientRect().top + num.offsetHeight / 2 - dot.offsetHeight / 2;
+      dot.style.top = Math.max(0, y).toFixed(1) + 'px';
+    }
+    function activate(id: string) {
+      if (id === activeId) return;
+      activeId = id;
+      stages.forEach((s) => s.classList.toggle('on', s.dataset.stage === id));
+      items.forEach((s) => s.classList.toggle('on', s.dataset.item === id));
+      const idx = items.findIndex((x) => x.dataset.item === id);
+      if (posNow) posNow.textContent = String(idx + 1).padStart(2, '0');
+      placeDot();
+    }
+    // Mục đang xem = mục có tâm gần đường giữa màn hình nhất. Chỉ cuộn, tiêu điểm bàn phím và nút trước/sau mới đổi mục (không dùng hover).
+    let pending = false, lockUntil = 0;
+    const lock = () => { lockUntil = performance.now() + 900; };
+    function nearest() {
+      pending = false;
+      if (performance.now() < lockUntil) return;
+      const mid = window.innerHeight / 2;
+      let best = items[0], bestD = Infinity;
+      items.forEach((it) => {
+        const r = it.getBoundingClientRect();
+        const d = Math.abs(r.top + r.height / 2 - mid);
+        if (d < bestD) { bestD = d; best = it; }
+      });
+      activate(best.dataset.item as string);
+    }
+    window.addEventListener('scroll', () => { const t = performance.now(); if (t < lockUntil) { lockUntil = Math.max(lockUntil, t + 160); return; } if (!pending) { pending = true; requestAnimationFrame(nearest); } }, { passive: true });
+    window.addEventListener('resize', () => { nearest(); placeDot(); });
+    nearest();
+    items.forEach((it) => it.addEventListener('focusin', () => { lock(); activate(it.dataset.item as string); }));
+    const step = (d: number) => {
+      const cur = items.findIndex((x) => x.dataset.item === activeId);
+      const i = Math.max(0, Math.min(items.length - 1, cur + d));
+      lock();
+      activate(items[i].dataset.item as string);
+      items[i].scrollIntoView({ block: 'center', behavior: reduce.matches ? 'auto' : 'smooth' });
+    };
+    root.querySelector('#prev')?.addEventListener('click', () => step(-1));
+    root.querySelector('#next')?.addEventListener('click', () => step(1));
+  });
+</script>
+
+<style>
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .journey.flush { margin-top: -34px; padding-top: calc(34px + clamp(36px, 5vw, 60px)); }
+  .pos { font: 600 22px var(--display); letter-spacing: .06em; margin: 0; }
+  .show { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(24px, 4vw, 56px); align-items: start; }
+  .stage-col { position: sticky; top: 80px; }
+  .stage { position: relative; aspect-ratio: 3 / 2; border: 1px solid var(--navy-line); border-radius: 16px; overflow: hidden; background: radial-gradient(500px 260px at 70% 20%, #1b2f55, var(--navy-2)); }
+  .st { position: absolute; inset: 0; opacity: 0; transition: opacity .35s ease; }
+  .st.on { opacity: 1; }
+  .stage-note { position: absolute; left: 14px; bottom: 10px; font-size: 12px; color: var(--on-dark-muted); }
+  .stepper { display: flex; gap: 8px; margin-top: 12px; }
+  .stepper button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #5a6a8a; background: transparent; color: var(--on-dark); font: 500 20px/1 var(--font); cursor: pointer; transition: background .18s ease, border-color .18s ease; }
+  .stepper button:hover { background: rgba(255,255,255,.08); border-color: var(--on-dark); }
+  .list { list-style: none; margin: 0; padding: 0 0 0 36px; position: relative; }
+  .rail { position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--navy-line); }
+  .rail i { position: absolute; left: -5px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px rgba(255,107,44,.22); transition: top .25s ease; }
+  .list li { display: grid; grid-template-columns: 52px 1fr; gap: 6px; padding: 26px 0 28px; border-top: 1px solid var(--navy-line); color: var(--on-dark-muted); transition: color .2s ease; }
+  .list li:first-of-type { border-top: 0; }
+  .list li.on { color: var(--on-dark); }
+  .num { font: 700 34px/1 var(--display); letter-spacing: .02em; color: #3b4f76; transition: color .2s ease; }
+  .list li.on .num { color: var(--accent); }
+  .txt h3 { margin: 0 0 4px; font-size: 18px; }
+  .txt h3 a { text-decoration: none; }
+  .txt p { margin: 0 0 4px; font-size: 14px; }
+  .txt .meta { font-size: 12.5px; opacity: .8; }
+  .badge-dev.inl { margin-left: 8px; font-size: 11.5px; vertical-align: middle; }
+  .more { display: inline-block; margin-top: 8px; font-size: 14px; color: var(--on-dark); }
+  .inline-scene { display: none; }
+  @media (max-width: 860px) {
+    .show { grid-template-columns: 1fr; }
+    .stage-col { display: none; }
+    .list { padding-left: 0; }
+    .rail { display: none; }
+    .list li { grid-template-columns: 1fr; color: var(--on-dark); padding: 18px 0 20px; }
+    .num { font-size: 26px; }
+    .inline-scene { display: block; order: -1; margin-bottom: 10px; border: 1px solid var(--navy-line); border-radius: 12px; overflow: hidden; }
+  }
+</style>

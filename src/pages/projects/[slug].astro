@@ -1,0 +1,198 @@
+---
+import Base from '../../layouts/Base.astro';
+import { Image } from 'astro:assets';
+import Scene from '../../components/Scene.astro';
+import ZaloButton from '../../components/ZaloButton.astro';
+import CopyLink from '../../components/CopyLink.astro';
+import { getProjects, getProject, getIndustries, getSolutions, nameOf, safeUrl, imagesOf } from '../../lib/store';
+
+export function getStaticPaths() {
+  return getProjects().map((p) => ({ params: { slug: p.slug } }));
+}
+const p = getProject(Astro.params.slug!)!;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const inds = p.industryIds.map((i) => nameOf(getIndustries(), i));
+const sols = p.solutionIds.map((i) => nameOf(getSolutions(), i));
+const demo = safeUrl(p.demoUrl);
+let n = 0;
+const num = () => String(++n).padStart(2, '0');
+const solution = [...p.solutionBlocks, ...p.features];
+const observed = p.observedScreens ?? [];
+const caveats = p.caveats ?? [];
+const images = imagesOf(p);
+const shortCap = (c: string) => c.split(' · ')[0];
+---
+<Base title={p.title} description={p.summary}>
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Điều hướng phụ"><a href={`${base}/projects/`}>← Quay lại danh sách dự án</a></nav>
+    <div class="detail">
+      <aside class="side">
+        {images.length > 0 ? (
+          <div class="gallery" id="gallery">
+            <div class="side-box stage">
+              {images.map((im, i) => (
+                <div class:list={['gimg', i === 0 && 'on']} data-gi={i}>
+                  <Image src={im.src} alt={im.alt} widths={[480, 768, 1200]} sizes="(max-width: 860px) 100vw, 460px" format="webp" quality={82} loading={i === 0 ? 'eager' : 'lazy'} />
+                </div>
+              ))}
+            </div>
+            <p class="gcap" id="gcap" aria-live="polite">{images[0].caption}</p>
+            {images.length > 1 && (
+              <div class="thumbs" role="group" aria-label="Chọn ảnh">
+                {images.map((im, i) => (
+                  <button type="button" class:list={['th', i === 0 && 'on']} data-th={i} aria-pressed={i === 0 ? 'true' : 'false'} aria-label={`Ảnh ${i + 1} trên ${images.length}: ${shortCap(im.caption)}`}>
+                    <Image src={im.src} alt="" widths={[160, 320]} sizes="108px" format="webp" quality={70} loading="lazy" />
+                  </button>
+                ))}
+              </div>
+            )}
+            <button type="button" class="btn line zoom" id="zoomBtn" aria-haspopup="dialog">Phóng to ảnh</button>
+          </div>
+        ) : (
+          <div class="side-box"><Scene kind={p.art} depths={[0, 0, 0]} /></div>
+        )}
+      </aside>
+
+      <article class="story">
+        <header class="reveal">
+          <div class="badges">
+            {p.developmentStatus === 'in_progress' && <span class="badge-dev">Đang phát triển</span>}
+            {p.isSample && <span class="badge-sample">Minh họa</span>}
+          </div>
+          <h1>{p.title}</h1>
+          <p class="lead">{p.summary}</p>
+          <div class="tags">{[...inds, ...sols].map((n) => <span class="tag">{n}</span>)}</div>
+        </header>
+
+        {p.problem && <section class="reveal"><h2><span>{num()}</span>Bài toán</h2><p>{p.problem}</p></section>}
+        {(p.role || p.scope) && (
+          <section class="reveal"><h2><span>{num()}</span>Vai trò và phạm vi</h2>
+            {p.role && <p><strong>Vai trò:</strong> {p.role}</p>}
+            {p.scope && <p><strong>Phạm vi:</strong> {p.scope}</p>}
+          </section>
+        )}
+        {(solution.length > 0 || observed.length > 0 || caveats.length > 0 || p.technologies.length > 0) && (
+          <section class="reveal"><h2><span>{num()}</span>{p.solutionHeading ?? 'Giải pháp'}</h2>
+            {solution.length > 0 && <ul>{solution.map((x) => <li>{x}</li>)}</ul>}
+            {observed.length > 0 && (
+              <div>
+                <p class="obs-lead"><strong>Các màn hình đã quan sát trong phiên bản hiện tại:</strong></p>
+                <ul>{observed.map((x) => <li>{x}</li>)}</ul>
+              </div>
+            )}
+            {caveats.length > 0 && <ul class="caveats">{caveats.map((x) => <li>{x}</li>)}</ul>}
+            {p.technologies.length > 0 && <div class="tags">{p.technologies.map((t) => <span class="tag">{t}</span>)}</div>}
+          </section>
+        )}
+        {(demo || images.length > 0) && (
+          <section class="reveal"><h2><span>{num()}</span>Hình ảnh và video</h2>
+            {images.length > 0 && <ul class="capl">{images.map((im) => <li>{im.caption}</li>)}</ul>}
+            {demo && <p><a class="btn line" href={demo} target="_blank" rel="noopener noreferrer">Dùng thử</a></p>}
+          </section>
+        )}
+        {p.value && <section class="reveal"><h2><span>{num()}</span>Giá trị hướng đến</h2><p>{p.value}</p></section>}
+        {p.outcomes.length > 0 && <section class="reveal"><h2><span>{num()}</span>Kết quả</h2><ul>{p.outcomes.map((x) => <li>{x}</li>)}</ul></section>}
+
+        <aside class="ask reveal">
+          <h2>{p.cta ? 'Trao đổi với tôi' : 'Cần giải pháp tương tự?'}</h2>
+          <p class="muted">{p.cta ? p.cta + ' ' : ''}Gửi tên dự án qua Zalo để trao đổi; có thể sao chép tên và đường dẫn để gửi kèm.</p>
+          <div class="cta-row">
+            <ZaloButton label="Tư vấn làm dự án tương tự" source="project" entity={p.id} />
+            <CopyLink title={p.title} />
+          </div>
+        </aside>
+      </article>
+    </div>
+  </div>
+  {images.length > 0 && (
+    <dialog id="zoomDlg" class="zoom-dlg" aria-label="Ảnh phóng to">
+      <div class="zoom-bar">
+        <span id="zcap">{images[0].caption}</span>
+        <span class="zctl">
+          {images.length > 1 && <button type="button" class="btn line" id="zPrev" aria-label="Ảnh trước">‹</button>}
+          {images.length > 1 && <button type="button" class="btn line" id="zNext" aria-label="Ảnh tiếp theo">›</button>}
+          <button type="button" class="btn line" id="zoomClose">Đóng</button>
+        </span>
+      </div>
+      <div class="zoom-body">
+        {images.map((im, i) => (
+          <div class="zimg" data-zi={i} hidden={i !== 0}>
+            <Image src={im.src} alt={im.alt} widths={[1200, 1536]} sizes="(max-width: 1200px) 96vw, 1200px" format="webp" quality={86} loading="lazy" />
+          </div>
+        ))}
+      </div>
+    </dialog>
+  )}
+</Base>
+<script type="application/json" id="capdata" set:html={JSON.stringify(images.map((im) => im.caption))} />
+
+<script>
+  const stage = [...document.querySelectorAll<HTMLElement>('[data-gi]')];
+  const thumbs = [...document.querySelectorAll<HTMLButtonElement>('[data-th]')];
+  const zimgs = [...document.querySelectorAll<HTMLElement>('[data-zi]')];
+  const gcap = document.getElementById('gcap'), zcap = document.getElementById('zcap');
+  const dlg = document.getElementById('zoomDlg') as HTMLDialogElement | null;
+  const captions = zimgs.map((_, i) => (stage[i]?.querySelector('img')?.getAttribute('alt') ?? ''));
+  const capText = JSON.parse(document.getElementById('capdata')?.textContent ?? '[]') as string[];
+  let cur = 0;
+  function set(i: number) {
+    const n = stage.length; if (!n) return;
+    cur = (i + n) % n;
+    stage.forEach((e, k) => e.classList.toggle('on', k === cur));
+    thumbs.forEach((e, k) => { e.classList.toggle('on', k === cur); e.setAttribute('aria-pressed', String(k === cur)); });
+    zimgs.forEach((e, k) => (e.hidden = k !== cur));
+    if (gcap) gcap.textContent = capText[cur] ?? captions[cur];
+    if (zcap) zcap.textContent = capText[cur] ?? captions[cur];
+  }
+  thumbs.forEach((t, i) => t.addEventListener('click', () => set(i)));
+  document.getElementById('zoomBtn')?.addEventListener('click', () => dlg?.showModal());
+  document.getElementById('zoomClose')?.addEventListener('click', () => dlg?.close());
+  document.getElementById('zPrev')?.addEventListener('click', () => set(cur - 1));
+  document.getElementById('zNext')?.addEventListener('click', () => set(cur + 1));
+  dlg?.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  dlg?.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') { set(cur - 1); } else if (e.key === 'ArrowRight') { set(cur + 1); } });
+</script>
+
+<style>
+  /* Desktop: hình minh họa dính bên trái khi nội dung cuộn. Mobile: luồng dọc tự nhiên. */
+  .detail { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(20px, 4vw, 56px); align-items: start; padding-bottom: 24px; }
+  .side { position: sticky; top: 72px; }
+  .side-box { position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--soft); }
+  .gallery { display: grid; gap: 8px; }
+  .stage { aspect-ratio: 3 / 2; background: #f3f6fb; }
+  .gimg { position: absolute; inset: 0; opacity: 0; transition: opacity .3s ease; }
+  .gimg.on { opacity: 1; }
+  .gimg :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: left top; }
+  .gcap { font-size: 13px; color: var(--muted); margin: 2px 2px 0; }
+  .thumbs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .th { width: 84px; padding: 0; border: 2px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff; cursor: pointer; transition: border-color .18s ease; }
+  .th :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; object-position: left top; }
+  .th.on { border-color: var(--accent); }
+  .th:hover { border-color: var(--ink); }
+  .capl { list-style: none; padding: 0; margin: 0 0 8px; color: var(--muted); font-size: 13.5px; display: grid; gap: 4px; }
+  .zctl { display: inline-flex; gap: 8px; }
+  .zimg :global(img) { width: 100%; height: auto; }
+  .zoom { min-height: 40px; }
+  .zoom-dlg { border: 0; border-radius: 14px; padding: 0; width: min(1240px, 96vw); background: var(--paper); color: var(--ink); }
+  .zoom-dlg::backdrop { background: rgba(11,20,36,.72); }
+  .zoom-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+  .zoom-body { overflow: auto; max-height: calc(92vh - 64px); }
+  .side-box :global(.scene) { background: linear-gradient(160deg, #e9f0fb, #f5f7fa); }
+  .stage-note { position: absolute; left: 14px; bottom: 10px; font-size: 12px; color: var(--muted); }
+  .story header { margin-bottom: 8px; }
+  .lead { font-size: 16px; color: var(--muted); }
+  .confirm { font-size: 13px; color: var(--muted); }
+  .badges { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .obs-lead { margin: 10px 0 4px; font-size: 14px; }
+  .caveats { margin-top: 10px; padding-left: 18px; color: var(--muted); font-size: 13.5px; }
+  section { padding: 18px 0; border-top: 1px solid var(--line); }
+  section h2 { font-size: 17px; display: flex; gap: 12px; align-items: baseline; }
+  section h2 span { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .small { font-size: 13px; }
+  .ask { margin-top: 22px; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  @media (max-width: 860px) {
+    .detail { grid-template-columns: 1fr; }
+    .side { position: static; }
+  }
+</style>

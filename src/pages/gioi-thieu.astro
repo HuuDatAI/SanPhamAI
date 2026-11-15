@@ -1,0 +1,132 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import ZaloButton from '../components/ZaloButton.astro';
+import profilePhoto from '../assets/profile-giang-day.png';
+import { getSettings, getFeaturedProjects } from '../lib/store';
+const s = getSettings();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const projects = getFeaturedProjects();
+const work = [
+  { icon: 'compass', t: 'Tư vấn giải pháp', d: 'Tôi cùng bạn làm rõ nhu cầu, rà soát quy trình và đề xuất giải pháp AI phù hợp với bối cảnh thực tế.' },
+  { icon: 'layers', t: 'Phát triển hệ thống', d: 'Tôi thiết kế, phát triển và tích hợp giải pháp, kết nối dữ liệu và kiểm thử để đưa vào sử dụng.' },
+  { icon: 'book', t: 'Hướng dẫn sử dụng', d: 'Tôi xây dựng nội dung, hướng dẫn thực hành và đồng hành để đội ngũ ứng dụng hiệu quả vào công việc.' },
+] as const;
+---
+<Base title="Giới thiệu" description={`${s.personName} — ${s.positioning}. Phát triển hệ thống, phân tích dữ liệu, giảng dạy AI ứng dụng.`} hero>
+  <!-- Giới thiệu ngắn cạnh ảnh -->
+  <section class="hero">
+    <div class="wrap hero-in">
+      <div class="who">
+        <p class="eyebrow reveal" style="--d:0">Giới thiệu</p>
+        <h1 class="reveal" style="--d:1">{s.personName}</h1>
+        <p class="role reveal" style="--d:1">Tư vấn giải pháp AI &amp; chuyển đổi số</p>
+        <p class="tags2 reveal" style="--d:2">Phát triển hệ thống · Phân tích dữ liệu · Giảng dạy AI ứng dụng</p>
+        <p class="reveal" style="--d:2">Tôi tư vấn, triển khai các giải pháp AI cho doanh nghiệp và giảng dạy AI ứng dụng cho người đi làm.</p>
+        <p class="reveal" style="--d:3">Các dự án tôi đã thực hiện trải từ AI hỗ trợ tuyển dụng, phân tích hiệu quả bán hàng, tư vấn khách hàng đa kênh đến LMS và hệ thống quản trị cho doanh nghiệp xây dựng.</p>
+        <p class="links reveal" style="--d:3"><a class="link-arrow" href={`${base}/projects/`}>Khám phá dự án</a> <a class="link-arrow" href={`${base}/lien-he/`}>Liên hệ trao đổi</a></p>
+      </div>
+      <figure class="photo reveal" style="--d:2" data-scene>
+        <Image src={profilePhoto} alt="Đỗ Trường Sơn đang hướng dẫn nội dung phân tích dữ liệu trong buổi đào tạo"
+               widths={[480, 720, 960]} sizes="(max-width: 860px) 100vw, 520px" format="webp" quality={78} loading="eager" data-depth="0.35" />
+      </figure>
+    </div>
+  </section>
+
+  <section class="section plain">
+    <div class="wrap narrow">
+      <h2 class="reveal">Kinh nghiệm</h2>
+      <p class="reveal">Tôi có <strong>7 năm kinh nghiệm đảm nhiệm các vị trí quản lý trong các lĩnh vực công nghệ, kinh doanh, thương mại điện tử và marketing</strong>, cùng <strong>6 năm kinh nghiệm đào tạo</strong>. Việc làm việc ở nhiều lĩnh vực giúp tôi kết nối góc nhìn kinh doanh, quản trị và công nghệ khi tư vấn giải pháp, phát triển hệ thống và giảng dạy AI ứng dụng.</p>
+      <p class="reveal">Tôi có nền tảng đào tạo ở hai lĩnh vực: Cử nhân Kinh tế và Cử nhân Công nghệ thông tin. Hai hướng học này hỗ trợ tôi trong việc phân tích bài toán kinh doanh và phát triển giải pháp công nghệ phù hợp.</p>
+    </div>
+  </section>
+
+  <section class="section plain alt">
+    <div class="wrap">
+      <div class="narrow">
+        <h2 class="reveal">Từ công việc đến giải pháp</h2>
+        <p class="reveal">Khi bắt đầu một dự án, tôi muốn hiểu đội ngũ đang làm việc thế nào, dữ liệu đang nằm ở đâu và bước nào đang gây khó khăn. Những thông tin đó là cơ sở để xác định phần cần cải tiến và lựa chọn cách triển khai.</p>
+      </div>
+      <ul class="work">
+        {work.map((w, i) => (
+          <li class="reveal" style={`--d:${i}`}>
+            <span class="wico"><Icon name={w.icon} size={24} /></span>
+            <h3>{w.t}</h3>
+            <p>{w.d}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section dark projs">
+    <div class="wrap">
+      <div class="head-row reveal"><div><p class="eyebrow">Dự án</p><h2>Các dự án tôi đã thực hiện</h2></div><a class="link-arrow" href={`${base}/projects/`}>Xem các dự án</a></div>
+      <ul class="plist">
+        {projects.map((p, i) => (
+          <li class="reveal" style={`--d:${i % 3}`}>
+            <a href={`${base}/projects/${p.slug}/`}>
+              <span class="pn">{String(i + 1).padStart(2, '0')}</span>
+              <span class="pt">{p.title}{p.developmentStatus === 'in_progress' && <span class="badge-dev inl">Đang phát triển</span>}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section plain">
+    <div class="wrap narrow">
+      <h2 class="reveal">Giảng dạy AI theo công việc của người học</h2>
+      <p class="reveal">Tôi hiện giảng dạy AI Automation, AI cơ bản, AI cho kế toán và AI cho người làm văn phòng.</p>
+      <p class="reveal">Với kinh nghiệm xây dựng chương trình đào tạo, tôi tham gia từ thiết kế nội dung, chuẩn bị bài tập đến hướng dẫn thực hành. Tôi chọn các tình huống gần với công việc của người học: xử lý thông tin, lập báo cáo, chuẩn bị tài liệu hoặc tự động hóa những tác vụ lặp lại.</p>
+      <p class="tools reveal">Excel · Google Sheets · Looker Studio · Power BI · SQL · Python</p>
+      <p class="reveal"><a class="link-arrow" href={`${base}/chuyen-mon/`}>Xem các chủ đề giảng dạy</a></p>
+    </div>
+  </section>
+
+  <section class="section dark closing">
+    <div class="wrap contact reveal">
+      <div><h2>Cùng trao đổi về công việc bạn muốn cải thiện.</h2><p class="muted">Trang web không có biểu mẫu thu thập thông tin liên hệ.</p></div>
+      <div class="cta-row"><ZaloButton label="Liên hệ qua Zalo" variant="accent" source="about-contact" /></div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { padding: 108px 0 40px; background: radial-gradient(700px 300px at 78% 40%, rgba(255,255,255,.95), transparent 70%), linear-gradient(180deg, #c3d8f7 0%, #dbe8fb 55%, var(--bg) 100%); }
+  .hero-in { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 4vw, 56px); align-items: center; }
+  .who h1 { font-size: clamp(34px, 5vw, 56px); margin-bottom: 4px; }
+  .role { font: 600 clamp(18px, 2vw, 22px)/1.3 var(--font); margin: 0 0 6px; }
+  .tags2 { color: var(--muted); font-size: 14px; }
+  .who p { max-width: 52ch; }
+  .links { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 6px; }
+  .draft-note { font-size: 13px; }
+  .photo { margin: 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); aspect-ratio: 4 / 3.3; box-shadow: 0 18px 40px rgba(11,20,36,.14); }
+  .photo :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 22% 40%; scale: 1.06; will-change: transform; }
+  .plain .narrow, .narrow { max-width: 760px; }
+  .plain h2, .section h2 { margin-bottom: 10px; }
+  .alt { background: var(--paper); }
+  .work { list-style: none; margin: 24px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .work li { border-top: 1px solid var(--line); padding-top: 16px; }
+  .wico { display: inline-grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; background: var(--bg); }
+  .work h3 { margin: 0 0 4px; font-size: 17px; }
+  .work p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  .plist { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 40px; }
+  .plist li { border-top: 1px solid var(--navy-line); }
+  .plist a { display: flex; gap: 16px; align-items: baseline; padding: 16px 0; text-decoration: none; color: var(--on-dark); transition: color .18s ease; }
+  .plist a:hover .pt { text-decoration: underline; text-underline-offset: 4px; }
+  .pn { font: 700 24px var(--display); color: var(--accent); letter-spacing: .04em; }
+  .pt { font-size: 16.5px; font-weight: 500; }
+  .badge-dev.inl { margin-left: 8px; font-size: 11.5px; vertical-align: middle; }
+  .tools { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
+  .closing { border-top: 1px solid var(--navy-line); }
+  .contact { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .contact h2 { margin-bottom: 6px; }
+  @media (max-width: 860px) {
+    .hero { padding: 120px 0 28px; }
+    .hero-in, .work, .plist { grid-template-columns: 1fr; }
+    .photo { order: -1; aspect-ratio: 16 / 10; }
+  }
+</style>

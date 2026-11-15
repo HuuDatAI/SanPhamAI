@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import ZaloButton from '../components/ZaloButton.astro';
+import { getSettings, safeUrl } from '../lib/store';
+const s = getSettings();
+const hasLink = !!safeUrl(s.zaloUrl);
+const qr = s.zaloQr;
+---
+<Base title="Liên hệ" description="Trao đổi dự án hoặc chương trình đào tạo qua Zalo.">
+  <div class="wrap narrow">
+    <h1 class="pg-title">Liên hệ qua Zalo</h1>
+    <p class="muted">Trang web không có biểu mẫu thu thập thông tin liên hệ. Hãy nhắn qua Zalo và cho tôi biết dự án hoặc chủ đề bạn quan tâm; bạn có thể dùng nút "Sao chép tên và đường dẫn" ở trang chi tiết để gửi kèm.</p>
+    {hasLink && <p><ZaloButton label="Mở Zalo" variant="accent" source="contact-page" /></p>}
+    {qr && (
+      <figure class="qr">
+        <img src={qr} alt={s.zaloQrAlt} width="840" height="1280" />
+        <figcaption class="muted">{s.zaloQrCaption}</figcaption>
+        <p><button type="button" class="btn line" data-qr-open aria-haspopup="dialog">Phóng to mã QR</button></p>
+      </figure>
+    )}
+    {!hasLink && !qr && <p class="state" role="status">Chủ website chưa cấu hình Zalo. Thông tin liên hệ sẽ hiển thị tại đây khi sẵn sàng.</p>}
+  </div>
+</Base>
+<style>.narrow { max-width: 680px; padding-bottom: 32px; } .pg-title { margin: 32px 0 14px; } .qr { margin: 24px 0; } .qr img { width: min(100%, 300px); height: auto; border: 1px solid var(--line); border-radius: 14px; }</style>
