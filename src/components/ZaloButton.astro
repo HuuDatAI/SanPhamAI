@@ -1,0 +1,20 @@
+---
+/**
+ * Nút liên hệ Zalo. Chỉ hiển thị link thật khi đã cấu hình; thiếu cả link lẫn QR thì báo chưa cấu hình.
+ * Không có form, không tự gửi tin nhắn, không dẫn tới địa chỉ giả.
+ */
+import { getSettings, safeUrl } from '../lib/store';
+interface Props { label?: string; variant?: 'solid' | 'line'; source?: string; entity?: string }
+const { label = 'Liên hệ Zalo', variant = 'solid', source = 'page', entity = '' } = Astro.props;
+const s = getSettings();
+const url = safeUrl(s.zaloUrl);
+const hasQr = !!s.zaloQr;
+---
+{url ? (
+  <a class:list={['btn', variant === 'line' && 'line']} href={url} target="_blank" rel="noopener noreferrer"
+     data-zalo data-source={source} data-entity={entity}>{label}</a>
+) : hasQr ? (
+  <a class:list={['btn', variant === 'line' && 'line']} href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/lien-he/`}>Quét mã QR Zalo</a>
+) : (
+  <span class="btn is-off" role="status" title="Chủ website chưa cấu hình Zalo">Zalo chưa cấu hình</span>
+)}

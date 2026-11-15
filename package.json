@@ -4,9 +4,18 @@
   "type": "module",
   "scripts": {
     "backend:push": "clasp push",
-    "backend:check": "node --check backend/Core.js && node --check backend/Media.js && node --check backend/Api.js && node --check backend/Poc.js"
+    "backend:check": "node --check backend/Core.js && node --check backend/Media.js && node --check backend/Api.js && node --check backend/Poc.js",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check:public": "node scripts/check-public.mjs",
+    "check:types": "astro check"
   },
   "devDependencies": {
     "@google/clasp": "^3.4.1"
+  },
+  "dependencies": {
+    "astro": "^6.4.8",
+    "typescript": "^7.0.2"
   }
 }

@@ -1,0 +1,61 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getProjects, getIndustries, getSolutions } from '../../lib/store';
+const projects = getProjects();
+const industries = getIndustries().filter((i) => projects.some((p) => p.industryIds.includes(i.id)));
+const solutions = getSolutions().filter((i) => projects.some((p) => p.solutionIds.includes(i.id)));
+---
+<Base title="Dự án" description="Danh sách dự án AI và chuyển đổi số. Tìm kiếm và lọc theo ngành, loại giải pháp.">
+  <div class="wrap">
+    <h1 class="pg-title">Dự án</h1>
+    <form class="filters" id="filters" role="search" aria-label="Tìm và lọc dự án" onsubmit="return false">
+      <label class="field grow"><span>Tìm kiếm</span>
+        <input id="q" type="search" placeholder="Tên dự án, mô tả hoặc công nghệ…" autocomplete="off" /></label>
+      <label class="field"><span>Ngành</span>
+        <select id="ind"><option value="">Tất cả ngành</option>{industries.map((i) => <option value={i.id}>{i.name}</option>)}</select></label>
+      <label class="field"><span>Loại giải pháp</span>
+        <select id="sol"><option value="">Tất cả loại</option>{solutions.map((i) => <option value={i.id}>{i.name}</option>)}</select></label>
+      <button type="button" class="btn line" id="clear" hidden>Xóa bộ lọc</button>
+    </form>
+    <p class="count" id="count" role="status" aria-live="polite">{projects.length} dự án</p>
+    <div class="grid" id="list">{projects.map((p) => <ProjectCard project={p} />)}</div>
+    <div class="empty" id="none" hidden>Không tìm thấy dự án phù hợp. Hãy thử từ khóa khác hoặc xóa bộ lọc.</div>
+  </div>
+</Base>
+
+<script>
+  const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().trim();
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const q = $<HTMLInputElement>('q'), ind = $<HTMLSelectElement>('ind'), sol = $<HTMLSelectElement>('sol');
+  const clear = $('clear'), count = $('count'), none = $('none');
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-card]')];
+  const index = cards.map((c) => ({ c, text: norm(c.dataset.text ?? ''), ind: (c.dataset.ind ?? '').split(' '), sol: (c.dataset.sol ?? '').split(' ') }));
+
+  function apply() {
+    const term = norm(q.value);
+    let n = 0;
+    for (const r of index) {
+      const ok = (!term || r.text.includes(term)) && (!ind.value || r.ind.includes(ind.value)) && (!sol.value || r.sol.includes(sol.value));
+      r.c.hidden = !ok; if (ok) n++;
+    }
+    count.textContent = `${n} dự án`;
+    none.hidden = n !== 0;
+    clear.hidden = !(term || ind.value || sol.value);
+  }
+  [q, ind, sol].forEach((el) => el.addEventListener('input', apply));
+  clear.addEventListener('click', () => { q.value = ''; ind.value = ''; sol.value = ''; apply(); q.focus(); });
+</script>
+
+<style>
+  .pg-title { margin: 32px 0 20px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 14px; align-items: end; margin-bottom: 14px; }
+  .field { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+  .field.grow { flex: 1 1 260px; }
+  .field:not(.grow) { flex: 1 1 200px; }
+  .field select { width: 100%; }
+  .field input, .field select { min-height: 44px; padding: 0 12px; border: 1px solid #c9c9c9; border-radius: 8px; background: #fff; font: 400 15px var(--font); color: var(--ink); }
+  .field input:focus, .field select:focus { border-color: var(--ink); outline: none; box-shadow: 0 0 0 3px rgba(10,79,214,.18); }
+  .count { color: var(--muted); font-size: 14px; margin: 8px 0 16px; }
+  [hidden] { display: none !important; }
+</style>

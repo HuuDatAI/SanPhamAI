@@ -1,0 +1,23 @@
+---
+/** Cho khách sao chép tên + URL để dán vào Zalo. Không tự gửi gì. */
+interface Props { title: string }
+const { title } = Astro.props;
+---
+<button type="button" class="btn line" data-copy data-title={title}>Sao chép tên và đường dẫn</button>
+<span class="muted copy-msg" role="status" aria-live="polite"></span>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const text = `${btn.dataset.title}\n${location.href.split('#')[0]}`;
+      const msg = btn.nextElementSibling as HTMLElement;
+      try {
+        await navigator.clipboard.writeText(text);
+        msg.textContent = 'Đã sao chép.';
+      } catch {
+        msg.textContent = 'Không sao chép được. Hãy chép thủ công từ thanh địa chỉ.';
+      }
+    });
+  });
+</script>
+<style>.copy-msg { font-size: 14px; align-self: center; }</style>

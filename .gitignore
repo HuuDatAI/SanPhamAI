@@ -5,3 +5,5 @@ dist/
 .clasprc.json
 backend/_local*.js
 .env*
+scripts/forbidden.local.txt
+.claude/
