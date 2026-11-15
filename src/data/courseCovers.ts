@@ -13,7 +13,9 @@ import vanPhong from '../assets/courses/ai-cho-dan-van-phong.webp';
 import chatgpt from '../assets/courses/chatgpt-hanh-chinh-ke-hoach-tai-chinh.webp';
 import keToan from '../assets/courses/ai-cho-ke-toan.webp';
 import excelBi from '../assets/courses/excel-power-query-power-bi.webp';
+import looker from '../assets/courses/looker-studio-dashboard.webp';
 
+/** Ghi chú: bìa Looker Studio là ảnh chụp một dashboard ví dụ, đã cắt bỏ phần dưới có bảng tên người. Các bìa còn lại là artwork thiết kế. */
 export const courseCovers: Record<string, { src: ImageMetadata; alt: string }> = {
   'ai-automation': { src: automation, alt: 'Bìa chủ đề AI Automation: chuỗi bước quy trình được kết nối và tự động hóa' },
   'ai-agent': { src: agent, alt: 'Bìa chủ đề AI Agent: trợ lý AI kết nối với tri thức và các công cụ' },
@@ -24,5 +26,6 @@ export const courseCovers: Record<string, { src: ImageMetadata; alt: string }> =
   'ai-cho-dan-van-phong': { src: vanPhong, alt: 'Bìa chủ đề AI cho dân văn phòng: tài liệu, lịch và bài trình bày' },
   'chatgpt-hanh-chinh-ke-hoach-tai-chinh': { src: chatgpt, alt: 'Bìa chủ đề ChatGPT cho hành chính và kế hoạch–tài chính: hồ sơ và bảng kế hoạch' },
   'ai-cho-ke-toan': { src: keToan, alt: 'Bìa chủ đề AI kế toán và kiểm toán: đối chiếu chứng từ và số liệu' },
+  'looker-studio-dashboard': { src: looker, alt: 'Ví dụ dashboard Looker Studio: thẻ chỉ số tổng hợp, biểu đồ xu hướng, cơ cấu và bộ lọc theo thời gian, đơn vị, phòng ban' },
   'excel-power-query-power-bi': { src: excelBi, alt: 'Bìa chủ đề Excel, Power Query và Power BI: từ bảng dữ liệu đến biểu đồ báo cáo' },
 };
