@@ -35,6 +35,7 @@ function doPost(e) {
       case 'admin.hide': return adminHide_(actor, p);
       case 'media.startUpload': return mediaStartUpload_(p);
       case 'media.completeUpload': return mediaCompleteUpload_(p);
+      case 'media.refresh': return mediaRefresh_(p);
       default: throw new ApiError('NOT_FOUND', 'Không có thao tác này.', false);
     }
   });
@@ -145,7 +146,11 @@ function adminPublish_(actor, p) {
       mediaIdsOf_(draft).forEach(function (x) {
         const m = medias.filter(function (r) { return r.id === x.id; })[0];
         if (!m) throw new ApiError('VALIDATION_ERROR', 'Media không tồn tại: ' + x.id, false);
-        if (m.provider === 'drive' && m.processing_status !== 'ready') throw new ApiError('MEDIA_NOT_READY', 'Media chưa tải lên xong: ' + m.name, true);
+        if (m.provider === 'drive' && m.processing_status !== 'ready') {
+          throw new ApiError('MEDIA_NOT_READY', m.processing_status === 'processing'
+            ? 'Drive vẫn đang xử lý video, chưa phát được: ' + m.name
+            : 'Media chưa tải lên xong: ' + m.name, true);
+        }
         const before = m.app_permission_id;
         ensurePublic_(m);
         m.updated_at = nowIso_();

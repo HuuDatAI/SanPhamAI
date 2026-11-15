@@ -126,3 +126,33 @@ Cần từ người dùng (không gửi mật khẩu trong chat):
 2. Tự tạo OAuth Client ID (loại Web) trong Google Cloud Console — không bật billing — rồi gửi **Client ID** (không phải secret).
 3. Xác nhận tài khoản Google nào là admin duy nhất.
 4. Quyết định ở mục 5.
+
+## 8. Bổ sung (BA-005/BA-009): luồng xuất bản tĩnh, ẩn nội dung và giới hạn riêng tư
+
+### 8.1 Luồng đề xuất (CHƯA triển khai; không có dispatch/deploy nào được kích hoạt)
+1. Admin bấm **Xuất bản** → backend validate, cấp quyền media, ghi snapshot vào Sheet, đánh dấu `COMMITTED`.
+2. Backend gửi `repository_dispatch` (token fine-grained giới hạn đúng repo này, lưu trong Script Properties; **không** ở browser, Sheet hay repo).
+3. GitHub Actions: tải toàn bộ snapshot đã xuất bản từ API công khai → `astro build` → deploy Pages. Mỗi lần build **sinh lại toàn bộ** site; slug không còn `published` thì không có tệp HTML.
+4. Thời gian có hiệu lực ước tính: build + deploy 1–3 phút, cộng cache CDN của GitHub Pages (thường tối đa ~10 phút). Con số cần đo thật khi được phép chạy workflow.
+
+### 8.2 Ẩn nội dung: điều gì thật sự biến mất, khi nào
+| Thành phần | Hiệu lực khi bấm Ẩn |
+|---|---|
+| API công khai (`public.*`) | Ngay (đọc trực tiếp Sheet, có thể kèm cache ngắn của Apps Script) |
+| Quyền Drive của media do ứng dụng cấp | Ngay sau khi thu hồi thành công; thất bại thì hiện trạng thái `REVOKE_FAILED` để retry |
+| Tệp HTML đã deploy | **Chưa biến mất** cho tới khi build kế tiếp deploy xong, rồi tới khi CDN hết cache |
+| Bản sao ngoài tầm kiểm soát (công cụ tìm kiếm, web archive, ảnh chụp màn hình, bản đã tải) | **Không thu hồi được** |
+
+Kết luận: ẩn ở API **không** làm nội dung trong HTML/cache đã phát hành riêng tư ngay lập tức. Nếu trang chi tiết chỉ che bằng JS khi gọi API, nội dung vẫn nằm trong nguồn HTML — đó chỉ là che UI, không phải thu hồi. Giao diện quản trị phải nói rõ điều này khi Ẩn ("đã gỡ khỏi API; trang tĩnh sẽ cập nhật sau ~X phút").
+
+### 8.3 Đánh giá mô hình "không nhúng nội dung cần thu hồi trong artifact công khai"
+- **Mô hình A (đề xuất mặc định)**: HTML tĩnh chứa nội dung đã xuất bản → SEO và xem trước liên kết tốt; chấp nhận độ trễ thu hồi ở bảng 8.2. Phù hợp nội dung vốn dành để công khai (dự án, khóa học giới thiệu).
+- **Mô hình B (tùy chọn theo từng mục)**: HTML chỉ là khung (tiêu đề + mô tả ngắn), phần thân tải lúc chạy từ API. Ẩn có hiệu lực gần như ngay với phần thân; đổi lại SEO/OG kém hơn và trang không đọc được khi tắt JS hoặc API lỗi.
+- Đề xuất: mặc định A; cho phép đặt cờ "chỉ tải lúc chạy" cho mục nào chủ website muốn thu hồi nhanh. Cần chủ website xác nhận trước khi cài đặt.
+- Việc **không nên làm**: coi runtime fetch như cơ chế riêng tư; dùng nó để tuyên bố nội dung "đã xóa".
+
+### 8.4 Ràng buộc upload (cập nhật theo review mã Media.js)
+- Phiên resumable được liên kết với `mediaId` **phía server** (CacheService, hết hạn 6 giờ, không ghi Sheet/log). `media.completeUpload` chỉ nhận `mediaId`, bỏ qua mọi URL phiên do client gửi → "mediaId A + phiên B" không thể xảy ra.
+- Kiểm `status` HTTP trước khi parse; đối chiếu thư mục cha, chủ sở hữu, dung lượng **và MIME** với giá trị đã khai khi bắt đầu.
+- Trạng thái tách bạch: `uploading` → ảnh `ready`; video `processing` → `ready` chỉ khi Drive đã sinh `videoMediaMetadata`. Xuất bản bị chặn (`MEDIA_NOT_READY`) khi video còn `processing`; vẫn cần player có thông báo + nút mở nguồn vì `ready` không bảo đảm phát được trên mọi trình duyệt.
+- Trạng thái kiểm chứng: ca T11 (A+B), T12 (sai MIME), T13 (phiên hết hạn) đã viết trong `Poc.js`, **chưa chạy trên Google** — xem TEST_REPORT.

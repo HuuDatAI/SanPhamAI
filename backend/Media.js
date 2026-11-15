@@ -58,6 +58,8 @@ function mediaStartUpload_(p) {
   if (!uploadUrl) throw new ApiError('UPLOAD_FAILED', 'Drive không trả về phiên upload.', true);
   const id = uuid_();
   const t = nowIso_();
+  // Ràng buộc phiên với mediaId phía server (BA-009). Chỉ lưu trong cache có hạn, không ghi Sheet/log.
+  CacheService.getScriptCache().put('up:' + id, uploadUrl, 21600);
   withLock_(function () {
     appendRow_('Media', {
       id: id, provider: 'drive', drive_file_id: '', youtube_id: '', mime_type: mime, name: name, size_bytes: size,
@@ -69,31 +71,62 @@ function mediaStartUpload_(p) {
 }
 
 /**
- * Xác nhận hoàn tất: backend tự hỏi Drive trạng thái phiên và metadata file; không tin client.
- * Chưa đủ bytes -> MEDIA_NOT_READY (không báo hoàn tất giả).
+ * Xác nhận hoàn tất. URL phiên LẤY TỪ CACHE phía server theo mediaId; mọi uploadUrl client gửi lên bị bỏ qua,
+ * nên "mediaId A + phiên B" không thể xảy ra. Chưa đủ bytes -> MEDIA_NOT_READY (không báo hoàn tất giả).
+ *
+ * Trạng thái: uploading -> (ảnh) ready | (video) processing -> ready.
+ * "Đã tải xong" khác "phát được": video chỉ ready khi Drive đã sinh videoMediaMetadata.
  */
+function driveFileMeta_(fileId) {
+  const res = driveFetch_('get', DRIVE_API + '/files/' + fileId + '?fields=id,size,mimeType,parents,trashed,ownedByMe,videoMediaMetadata(durationMillis)');
+  if (res.getResponseCode() !== 200) throw driveError_(res, 'UPLOAD_FAILED'); // kiểm status TRƯỚC khi parse
+  return JSON.parse(res.getContentText());
+}
+
 function mediaCompleteUpload_(p) {
-  const uploadUrl = String(p.uploadUrl || '');
-  if (uploadUrl.indexOf(DRIVE_UPLOAD + '?') !== 0) throw new ApiError('VALIDATION_ERROR', 'URL phiên upload không hợp lệ.', false);
   return withLock_(function () {
     const m = readTable_('Media').filter(function (r) { return r.id === p.mediaId; })[0];
     if (!m) throw new ApiError('NOT_FOUND', 'Không tìm thấy media.', false);
+    if (m.processing_status !== 'uploading') {
+      return { mediaId: m.id, driveFileId: m.drive_file_id, sizeBytes: Number(m.size_bytes), mimeType: m.mime_type, status: m.processing_status }; // idempotent
+    }
+    const uploadUrl = CacheService.getScriptCache().get('up:' + m.id);
+    if (!uploadUrl) throw new ApiError('UPLOAD_SESSION_EXPIRED', 'Phiên tải lên đã hết hạn hoặc không tồn tại. Hãy bắt đầu tải lại.', false);
     const res = UrlFetchApp.fetch(uploadUrl, { method: 'put', headers: { 'Content-Range': 'bytes */' + m.size_bytes }, muteHttpExceptions: true });
     const code = res.getResponseCode();
     if (code === 308) throw new ApiError('MEDIA_NOT_READY', 'Tệp chưa tải lên xong.', true);
     if (code !== 200 && code !== 201) throw driveError_(res, 'UPLOAD_FAILED');
     const fileId = JSON.parse(res.getContentText()).id;
-    const meta = JSON.parse(driveFetch_('get', DRIVE_API + '/files/' + fileId + '?fields=id,name,size,mimeType,parents,trashed,ownedByMe').getContentText());
-    const expectedFolder = cfg_(/^video\//.test(m.mime_type) ? 'VIDEOS_FOLDER_ID' : 'IMAGES_FOLDER_ID');
-    if (meta.trashed || !meta.ownedByMe || (meta.parents || []).indexOf(expectedFolder) < 0 || Number(meta.size) !== Number(m.size_bytes)) {
-      throw new ApiError('UPLOAD_FAILED', 'Tệp trên Drive không khớp với phiên upload.', false);
+    const meta = driveFileMeta_(fileId);
+    const isVideo = /^video\//.test(m.mime_type);
+    const expectedFolder = cfg_(isVideo ? 'VIDEOS_FOLDER_ID' : 'IMAGES_FOLDER_ID');
+    if (meta.trashed || !meta.ownedByMe || (meta.parents || []).indexOf(expectedFolder) < 0 ||
+        Number(meta.size) !== Number(m.size_bytes) || meta.mimeType !== m.mime_type) {
+      throw new ApiError('UPLOAD_FAILED', 'Tệp trên Drive không khớp với phiên upload (thư mục, dung lượng hoặc loại tệp).', false);
     }
     m.drive_file_id = fileId;
-    m.mime_type = meta.mimeType;
-    m.processing_status = 'ready';
+    m.processing_status = isVideo && !(meta.videoMediaMetadata && meta.videoMediaMetadata.durationMillis) ? 'processing' : 'ready';
     m.updated_at = nowIso_();
     updateRow_('Media', m._row, m);
-    return { mediaId: m.id, driveFileId: fileId, sizeBytes: Number(meta.size), mimeType: meta.mimeType };
+    CacheService.getScriptCache().remove('up:' + m.id);
+    return { mediaId: m.id, driveFileId: fileId, sizeBytes: Number(meta.size), mimeType: meta.mimeType, status: m.processing_status };
+  });
+}
+
+/** Hỏi lại Drive xem video đang 'processing' đã phát được chưa. */
+function mediaRefresh_(p) {
+  return withLock_(function () {
+    const m = readTable_('Media').filter(function (r) { return r.id === p.mediaId; })[0];
+    if (!m || !m.drive_file_id) throw new ApiError('NOT_FOUND', 'Không tìm thấy media.', false);
+    if (m.processing_status === 'processing') {
+      const meta = driveFileMeta_(m.drive_file_id);
+      if (meta.videoMediaMetadata && meta.videoMediaMetadata.durationMillis) {
+        m.processing_status = 'ready';
+        m.updated_at = nowIso_();
+        updateRow_('Media', m._row, m);
+      }
+    }
+    return { mediaId: m.id, status: m.processing_status };
   });
 }
 

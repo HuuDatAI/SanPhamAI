@@ -119,14 +119,57 @@ function runPoc() {
     const chunk = Utilities.newBlob(new Array(262144 + 1).join('a')).getBytes();
     const r1 = UrlFetchApp.fetch(s.uploadUrl, { method: 'put', payload: chunk, headers: { 'Content-Range': 'bytes 0-262143/' + total }, muteHttpExceptions: true });
     let early = 'none';
-    try { mediaCompleteUpload_({ mediaId: s.mediaId, uploadUrl: s.uploadUrl }); } catch (e) { early = e.code; }
+    try { mediaCompleteUpload_({ mediaId: s.mediaId }); } catch (e) { early = e.code; }
     const q = UrlFetchApp.fetch(s.uploadUrl, { method: 'put', headers: { 'Content-Range': 'bytes */' + total }, muteHttpExceptions: true });
     const range = q.getAllHeaders().Range || q.getAllHeaders().range;
     UrlFetchApp.fetch(s.uploadUrl, { method: 'put', payload: chunk, headers: { 'Content-Range': 'bytes 262144-524287/' + total }, muteHttpExceptions: true });
     const r3 = UrlFetchApp.fetch(s.uploadUrl, { method: 'put', payload: chunk, headers: { 'Content-Range': 'bytes 524288-786431/' + total }, muteHttpExceptions: true });
-    const done = mediaCompleteUpload_({ mediaId: s.mediaId, uploadUrl: s.uploadUrl });
+    const done = mediaCompleteUpload_({ mediaId: s.mediaId });
     rec('T10 resumable-session-server-init', r1.getResponseCode() === 308 && early === 'MEDIA_NOT_READY' && range === 'bytes=0-262143' && done.sizeBytes === total,
       'chunk1=' + r1.getResponseCode() + ' completeSớm=' + early + ' resumeRange=' + range + ' cuối=' + r3.getResponseCode() + ' size=' + done.sizeBytes);
+  });
+
+  function putAll_(url, total) {
+    const chunk = Utilities.newBlob(new Array(262144 + 1).join('b')).getBytes();
+    for (let off = 0; off < total; off += 262144) {
+      UrlFetchApp.fetch(url, { method: 'put', payload: chunk, headers: { 'Content-Range': 'bytes ' + off + '-' + (off + 262143) + '/' + total }, muteHttpExceptions: true });
+    }
+  }
+
+  attempt('T11 session-bound-to-mediaId', function () {
+    const origin = cfg_('ALLOWED_ORIGINS').split(',')[0].trim();
+    const total = 262144; // cùng dung lượng, cùng thư mục, cùng loại
+    const a = mediaStartUpload_({ name: tag + '-A.png', mimeType: 'image/png', size: total, origin: origin });
+    const b = mediaStartUpload_({ name: tag + '-B.png', mimeType: 'image/png', size: total, origin: origin });
+    putAll_(b.uploadUrl, total); // chỉ phiên B tải xong
+    let code = 'none';
+    try { mediaCompleteUpload_({ mediaId: a.mediaId, uploadUrl: b.uploadUrl }); } catch (e) { code = e.code; } // client "khai" phiên B cho A
+    const rowA = readTable_('Media').filter(function (r) { return r.id === a.mediaId; })[0];
+    const okB = mediaCompleteUpload_({ mediaId: b.mediaId });
+    rec('T11 session-bound-to-mediaId', code === 'MEDIA_NOT_READY' && !rowA.drive_file_id && okB.status === 'ready',
+      'A+phiênB -> ' + code + '; A.drive_file_id="' + rowA.drive_file_id + '"; B -> ' + okB.status);
+  });
+
+  attempt('T12 mime-mismatch-rejected', function () {
+    const origin = cfg_('ALLOWED_ORIGINS').split(',')[0].trim();
+    const total = 262144;
+    const s = mediaStartUpload_({ name: tag + '-mime.png', mimeType: 'image/png', size: total, origin: origin });
+    putAll_(s.uploadUrl, total);
+    const row = readTable_('Media').filter(function (r) { return r.id === s.mediaId; })[0];
+    row.mime_type = 'image/jpeg'; // giả lập dữ liệu kỳ vọng khác thực tế
+    updateRow_('Media', row._row, row);
+    let code = 'none';
+    try { mediaCompleteUpload_({ mediaId: s.mediaId }); } catch (e) { code = e.code; }
+    rec('T12 mime-mismatch-rejected', code === 'UPLOAD_FAILED', 'code=' + code);
+  });
+
+  attempt('T13 expired-session-rejected', function () {
+    const origin = cfg_('ALLOWED_ORIGINS').split(',')[0].trim();
+    const s = mediaStartUpload_({ name: tag + '-exp.png', mimeType: 'image/png', size: 262144, origin: origin });
+    CacheService.getScriptCache().remove('up:' + s.mediaId); // giả lập hết hạn
+    let code = 'none';
+    try { mediaCompleteUpload_({ mediaId: s.mediaId }); } catch (e) { code = e.code; }
+    rec('T13 expired-session-rejected', code === 'UPLOAD_SESSION_EXPIRED', 'code=' + code);
   });
 
   // Dọn dữ liệu thử: file vào Thùng rác, xóa hàng thử.
