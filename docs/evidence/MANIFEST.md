@@ -15,3 +15,6 @@ Mỗi thư mục ghi rõ chụp tại revision nào. **Chỉ `f1/` phản ánh b
 - Ảnh trong `f1/` lưu cùng commit chứa tệp này (commit ngay sau `e74286c`).
 
 > Ghi chú 16/11: ảnh chụp trong `f1/` (revision `e74286c`) được chụp TRƯỚC khi gỡ ảnh AI; các ảnh đó còn hiển thị ảnh AI đã bị gỡ. Chỉ dùng làm tư liệu lịch sử, không phản ánh giao diện hiện tại.
+
+## f2 — bằng chứng cho revision `54f3739` (16/11, chạy local, desktop 1440 px, reduced-motion bật)
+`docs/evidence/f2/`: d-home, d-projects, d-lms, d-xaydung, d-chuyenmon, d-ketoan, d-gioithieu. Thay thế `f1/` làm bằng chứng HEAD. Chưa có bản mobile lưu tệp (đã đo không tràn ngang ở 375 px bằng số) và chưa chụp 3 dự án còn lại.
