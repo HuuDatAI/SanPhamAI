@@ -143,7 +143,7 @@ export const courses: Course[] = courseList;
 export const settings = {
   brand: 'STECH',
   personName: 'Đỗ Trường Sơn',
-  positioning: 'Tư vấn giải pháp AI & chuyển đổi số · Giảng viên AI ứng dụng',
+  positioning: 'Tư vấn giải pháp AI & chuyển đổi số cho doanh nghiệp vừa và nhỏ · Giảng viên AI ứng dụng',
   headline: 'Từ bài toán vận hành đến hệ thống AI ứng dụng.',
   intro: 'Bạn đang có việc lặp lại mỗi ngày, báo cáo làm tay, dữ liệu nằm rải rác? Tôi cùng bạn chọn bài toán, thử giải pháp AI phù hợp và hướng dẫn đội ngũ dùng được trong công việc thật.',
   copyApproved: true, // chủ website đã duyệt nội dung profile (yêu cầu 16/11)
