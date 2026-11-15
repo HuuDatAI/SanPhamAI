@@ -4,7 +4,7 @@ import Scene from '../../components/Scene.astro';
 import Icon from '../../components/Icon.astro';
 import ZaloButton from '../../components/ZaloButton.astro';
 import { getCourses } from '../../lib/store';
-import { courseGroups, otherClasses } from '../../data/courses';
+import { courseGroups } from '../../data/courses';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const topics = getCourses();
 const icons = { 'ai-automation': 'flow', 'ai-agent': 'flow', 'smax-ai-chatbot': 'prompt', 'vba-excel': 'calc', 'ai-co-ban': 'prompt', 'claude-ai-cong-viec': 'prompt', 'ai-cho-ke-toan': 'calc', 'excel-power-query-power-bi': 'calc', 'ai-cho-dan-van-phong': 'doc', 'chatgpt-hanh-chinh-ke-hoach-tai-chinh': 'doc' } as const;
@@ -45,11 +45,6 @@ const steps = [
           </div>
         </div>
       ))}
-      <div class="grp other reveal">
-        <div class="ghead"><h2>Các nhóm lớp khác đã hướng dẫn</h2><p class="muted">Nội dung điều chỉnh theo công việc và nhu cầu người học.</p></div>
-        <ul>{otherClasses.map((x) => <li>{x}</li>)}</ul>
-      </div>
-      <p class="muted note">Đây là giới thiệu các lĩnh vực tôi đang giảng dạy, chưa phải thông báo tuyển sinh; học phí và lịch học được trao đổi trực tiếp.</p>
     </div>
   </section>
 
