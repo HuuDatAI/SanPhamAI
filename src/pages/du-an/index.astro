@@ -48,13 +48,13 @@ const solutions = getSolutions().filter((i) => projects.some((p) => p.solutionId
 </script>
 
 <style>
-  .pg-title { margin: 32px 0 20px; }
+  .pg-title { margin: 20px 0 12px; }
   .filters { display: flex; flex-wrap: wrap; gap: 14px; align-items: end; margin-bottom: 14px; }
   .field { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
   .field.grow { flex: 1 1 260px; }
   .field:not(.grow) { flex: 1 1 200px; }
   .field select { width: 100%; }
-  .field input, .field select { min-height: 44px; padding: 0 12px; border: 1px solid #c9c9c9; border-radius: 8px; background: #fff; font: 400 15px var(--font); color: var(--ink); }
+  .field input, .field select { min-height: 40px; padding: 0 12px; border: 1px solid #c9c9c9; border-radius: 8px; background: #fff; font: 400 15px var(--font); color: var(--ink); }
   .field input:focus, .field select:focus { border-color: var(--ink); outline: none; box-shadow: 0 0 0 3px rgba(10,79,214,.18); }
   .count { color: var(--muted); font-size: 14px; margin: 8px 0 16px; }
   [hidden] { display: none !important; }
