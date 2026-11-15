@@ -4,10 +4,27 @@
  * Kết quả ghi vào tab "PocLog". Dữ liệu thử được dọn sau khi chạy (file thử vào Thùng rác).
  */
 
-function pocAnonStatus_(fileId) {
-  // Gọi không kèm token: 200 = ai cũng tải được; còn lại = không công khai.
+/**
+ * Đo từ góc nhìn khách (không token). Drive trả 303 cho cả file công khai lẫn riêng tư nên KHÔNG so với 200:
+ * phân loại theo nơi chuyển hướng: accounts.google.com = đòi đăng nhập (riêng tư); *usercontent.google.com = tải được (công khai).
+ */
+function pocAnon_(fileId) {
   const res = UrlFetchApp.fetch('https://drive.google.com/uc?export=download&id=' + fileId, { muteHttpExceptions: true, followRedirects: false });
-  return res.getResponseCode();
+  const code = res.getResponseCode();
+  const h = res.getAllHeaders();
+  const loc = String(h.Location || h.location || '');
+  const m = loc.match(/^https?:\/\/([^\/]+)/);
+  const host = m ? m[1] : '';
+  let cls = 'unknown';
+  if (/accounts.google.com/.test(host) || code === 404) cls = 'private';
+  else if (/usercontent.google.com|googleusercontent.com/.test(host)) cls = 'public';
+  return { cls: cls, code: code, host: host, text: cls + '(' + code + ' ' + host + ')' };
+}
+
+/** Sự thật từ Drive API: file có quyền type=anyone không (không phụ thuộc cách đo ẩn danh). */
+function pocAnyone_(fileId) {
+  const res = driveFetch_('get', DRIVE_API + '/files/' + fileId + '/permissions?fields=permissions(id,type,role)');
+  return JSON.parse(res.getContentText()).permissions.some(function (x) { return x.type === 'anyone'; });
 }
 
 function pocMakeFile_(name) {
@@ -62,7 +79,7 @@ function runPoc() {
     B = adminSaveDraft_(actor, { type: 'project', slug: tag + '-b', draft: { title: 'B v1', cover_media_id: shared.mediaId } });
     made.push(A.id, B.id);
     const leaked = JSON.stringify(publicList_('project')).indexOf(tag) >= 0;
-    rec('T3 draft-not-public', !leaked && pocAnonStatus_(shared.fileId) !== 200, 'public.list chứa nháp=' + leaked + '; anon file=' + pocAnonStatus_(shared.fileId));
+    rec('T3 draft-not-public', !leaked && pocAnon_(shared.fileId).cls === 'private' && !pocAnyone_(shared.fileId), 'public.list chứa nháp=' + leaked + '; anon=' + pocAnon_(shared.fileId).text + '; permissions anyone=' + pocAnyone_(shared.fileId));
   });
 
   attempt('T4 publish-shares-only-needed', function () {
@@ -70,8 +87,9 @@ function runPoc() {
     B = adminPublish_(actor, { id: B.id, expectedRevision: B.revision, operationId: tag + '-pb' });
     const folderPerms = JSON.parse(driveFetch_('get', DRIVE_API + '/files/' + cfg_('IMAGES_FOLDER_ID') + '/permissions?fields=permissions(type)').getContentText()).permissions;
     const folderPublic = folderPerms.some(function (x) { return x.type === 'anyone'; });
-    const s1 = pocAnonStatus_(shared.fileId), s2 = pocAnonStatus_(only.fileId);
-    rec('T4 publish-shares-only-needed', s1 === 200 && s2 === 200 && !folderPublic && publicList_('project').length >= 2, 'anon shared=' + s1 + ' onlyA=' + s2 + ' folderPublic=' + folderPublic);
+    const s1 = pocAnon_(shared.fileId), s2 = pocAnon_(only.fileId);
+    const p1 = pocAnyone_(shared.fileId), p2 = pocAnyone_(only.fileId);
+    rec('T4 publish-shares-only-needed', s1.cls === 'public' && s2.cls === 'public' && p1 && p2 && !folderPublic && publicList_('project').length >= 2, 'anon shared=' + s1.text + ' onlyA=' + s2.text + '; perm anyone shared=' + p1 + ' onlyA=' + p2 + '; folderPublic=' + folderPublic);
   });
 
   attempt('T5 edit-draft-keeps-published', function () {
@@ -89,16 +107,18 @@ function runPoc() {
 
   attempt('T7 hide-one-shared-file-stays', function () {
     const r = adminHide_(actor, { id: A.id, operationId: tag + '-ha' });
-    const s1 = pocAnonStatus_(shared.fileId), s2 = pocAnonStatus_(only.fileId);
+    const s1 = pocAnon_(shared.fileId), s2 = pocAnon_(only.fileId);
+    const p1 = pocAnyone_(shared.fileId), p2 = pocAnyone_(only.fileId);
     let gone = false;
     try { publicGet_('project', tag + '-a'); } catch (e) { gone = e.code === 'NOT_FOUND'; }
-    rec('T7 hide-one-shared-file-stays', gone && s1 === 200 && s2 !== 200 && r.revokePending.length === 0, 'A gone=' + gone + ' anon shared=' + s1 + ' onlyA=' + s2);
+    rec('T7 hide-one-shared-file-stays', gone && p1 && !p2 && s1.cls === 'public' && s2.cls === 'private' && r.revokePending.length === 0, 'A gone=' + gone + '; perm anyone shared=' + p1 + ' onlyA=' + p2 + '; anon shared=' + s1.text + ' onlyA=' + s2.text);
   });
 
   attempt('T8 hide-last-revokes', function () {
+    const before = pocAnyone_(shared.fileId); // phải đang công khai thì ca này mới có giá trị
     adminHide_(actor, { id: B.id, operationId: tag + '-hb' });
-    const s1 = pocAnonStatus_(shared.fileId);
-    rec('T8 hide-last-revokes', s1 !== 200, 'anon shared=' + s1);
+    const after = pocAnyone_(shared.fileId), s1 = pocAnon_(shared.fileId);
+    rec('T8 hide-last-revokes', before === true && after === false && s1.cls === 'private', 'trước ẩn anyone=' + before + '; sau ẩn anyone=' + after + '; anon=' + s1.text);
   });
 
   attempt('T9 external-permission-untouched', function () {
@@ -107,9 +127,11 @@ function runPoc() {
     let C = adminSaveDraft_(actor, { type: 'project', slug: tag + '-c', draft: { title: 'C', cover_media_id: ext.mediaId } });
     made.push(C.id);
     C = adminPublish_(actor, { id: C.id, expectedRevision: C.revision });
+    const row = readTable_('Media').filter(function (r) { return r.id === ext.mediaId; })[0];
+    const appOwned = !!row.app_permission_id; // phải rỗng: quyền này không do ứng dụng cấp
     adminHide_(actor, { id: C.id });
-    const s = pocAnonStatus_(ext.fileId);
-    rec('T9 external-permission-untouched', s === 200, 'sau khi ẩn, quyền ngoài ứng dụng vẫn còn: anon=' + s);
+    const still = pocAnyone_(ext.fileId), s = pocAnon_(ext.fileId);
+    rec('T9 external-permission-untouched', !appOwned && still === true && s.cls === 'public', 'app_permission_id rỗng=' + !appOwned + '; sau ẩn anyone còn=' + still + '; anon=' + s.text);
   });
 
   attempt('T10 resumable-session-server-init', function () {

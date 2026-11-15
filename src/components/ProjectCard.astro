@@ -9,7 +9,7 @@ const inds = p.industryIds.map((i) => nameOf(getIndustries(), i));
 const sols = p.solutionIds.map((i) => nameOf(getSolutions(), i));
 const search = [p.title, p.summary, ...p.technologies, ...inds, ...sols].join(' ');
 ---
-<a class="card reveal" href={`${base}/du-an/${p.slug}/`}
+<a class="card reveal" href={`${base}/projects/${p.slug}/`}
    data-card data-ind={p.industryIds.join(' ')} data-sol={p.solutionIds.join(' ')} data-text={search}>
   <Art kind={p.art} />
   <div class="body">
