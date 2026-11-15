@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Art from '../../components/Art.astro';
+import Scene from '../../components/Scene.astro';
 import ZaloButton from '../../components/ZaloButton.astro';
 import CopyLink from '../../components/CopyLink.astro';
 import { getProjects, getProject, getIndustries, getSolutions, nameOf, safeUrl } from '../../lib/store';
@@ -21,7 +21,7 @@ const solution = [...p.solutionBlocks, ...p.features];
     <nav class="crumbs" aria-label="Điều hướng phụ"><a href={`${base}/projects/`}>← Quay lại danh sách dự án</a></nav>
     <div class="detail">
       <aside class="side" aria-label="Hình minh họa">
-        <div class="side-box"><Art kind={p.art} note={false} /><span class="stage-note">Hình minh họa · không phải ảnh hệ thống thật</span></div>
+        <div class="side-box"><Scene kind={p.art} depths={[0, 0, 0]} /><span class="stage-note">Hình minh họa · không phải ảnh hệ thống thật</span></div>
       </aside>
 
       <article class="story">
@@ -74,7 +74,7 @@ const solution = [...p.solutionBlocks, ...p.features];
   .detail { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(20px, 4vw, 56px); align-items: start; padding-bottom: 24px; }
   .side { position: sticky; top: 72px; }
   .side-box { position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--soft); }
-  .side-box :global(.art) { border: 0; aspect-ratio: 4 / 3; }
+  .side-box :global(.scene) { background: linear-gradient(160deg, #e9f0fb, #f5f7fa); }
   .stage-note { position: absolute; left: 14px; bottom: 10px; font-size: 12px; color: var(--muted); }
   .story header { margin-bottom: 8px; }
   .lead { font-size: 16px; color: var(--muted); }

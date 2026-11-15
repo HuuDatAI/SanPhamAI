@@ -1,37 +1,130 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Scene from '../../components/Scene.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import { getProjects, getIndustries, getSolutions } from '../../lib/store';
+import ZaloButton from '../../components/ZaloButton.astro';
+import { getProjects, getFeaturedProjects, getIndustries, getSolutions, nameOf, getSettings } from '../../lib/store';
+const s = getSettings();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const projects = getProjects();
+const featured = getFeaturedProjects();
 const industries = getIndustries().filter((i) => projects.some((p) => p.industryIds.includes(i.id)));
 const solutions = getSolutions().filter((i) => projects.some((p) => p.solutionIds.includes(i.id)));
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
-<Base title="Dự án" description="Danh sách dự án AI và chuyển đổi số. Tìm kiếm và lọc theo ngành, loại giải pháp.">
-  <div class="wrap">
-    <h1 class="pg-title">Dự án</h1>
-    <form class="filters" id="filters" role="search" aria-label="Tìm và lọc dự án" onsubmit="return false">
-      <label class="field grow"><span>Tìm kiếm</span>
-        <input id="q" type="search" placeholder="Tên dự án, mô tả hoặc công nghệ…" autocomplete="off" /></label>
-      <label class="field"><span>Ngành</span>
+<Base title="Dự án" description="Dự án AI và hệ thống đã thực hiện. Tìm kiếm và lọc theo ngành, loại giải pháp." hero>
+  <!-- HERO: chữ khổng lồ nằm sau tổ hợp cửa sổ phần mềm nhiều lớp (hình minh họa) -->
+  <section class="hero" data-scene>
+    <div class="ghost" aria-hidden="true" data-depth="-0.5">DỰ ÁN</div>
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <p class="eyebrow reveal" style="--d:0">{s.personName} · Tư vấn AI &amp; chuyển đổi số</p>
+        <h1 class="reveal" style="--d:1">Hệ thống AI ứng dụng,<br />bắt đầu từ bài toán thật.</h1>
+        <p class="lead reveal" style="--d:2">Các dự án tôi đã tham gia: từ tuyển dụng, bán hàng, chăm sóc khách hàng đến đào tạo và xây dựng.</p>
+        <div class="cta-row reveal" style="--d:3">
+          <a class="btn accent" href="#noi-bat">Khám phá dự án</a>
+          <ZaloButton label="Liên hệ trao đổi" variant="line" source="projects-hero" />
+        </div>
+      </div>
+      <div class="hero-scene reveal" style="--d:2">
+        <div class="hs main"><Scene kind="funnel" depths={[-0.2, 0.3, 0.9]} /></div>
+        <div class="hs side-a"><Scene kind="chat" layers={['l1', 'l2']} depths={[0, 0.6, 1.1]} /></div>
+        <div class="hs side-b"><Scene kind="lms" layers={['l1']} depths={[0, 0.9, 0]} /></div>
+        <p class="scene-note">Hình minh họa — không phải ảnh hệ thống thật</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- THANH TÌM VÀ LỌC (hoạt động thật, lọc danh sách bên dưới) -->
+  <div class="wrap find-wrap">
+    <form class="find" id="filters" role="search" aria-label="Tìm và lọc dự án" onsubmit="return false">
+      <label class="cell grow"><span>Tìm dự án</span>
+        <input id="q" type="search" placeholder="Tên, mô tả hoặc công nghệ…" autocomplete="off" /></label>
+      <label class="cell"><span>Ngành</span>
         <select id="ind"><option value="">Tất cả ngành</option>{industries.map((i) => <option value={i.id}>{i.name}</option>)}</select></label>
-      <label class="field"><span>Loại giải pháp</span>
+      <label class="cell"><span>Loại giải pháp</span>
         <select id="sol"><option value="">Tất cả loại</option>{solutions.map((i) => <option value={i.id}>{i.name}</option>)}</select></label>
-      <button type="button" class="btn line" id="clear" hidden>Xóa bộ lọc</button>
+      <div class="acts">
+        <button type="button" class="clear" id="clear" hidden>Xóa bộ lọc</button>
+        <a class="btn accent go" id="go" href="#tat-ca">Xem <span id="goN">{projects.length}</span> dự án</a>
+      </div>
     </form>
-    <p class="count" id="count" role="status" aria-live="polite">{projects.length} dự án</p>
-    <div class="grid" id="list">{projects.map((p) => <ProjectCard project={p} />)}</div>
-    <div class="empty" id="none" hidden>Không tìm thấy dự án phù hợp. Hãy thử từ khóa khác hoặc xóa bộ lọc.</div>
   </div>
+
+  <!-- DỰ ÁN NỔI BẬT: nền tối, hình lớn đổi theo mục đang xem, thước tiến trình 01–05 -->
+  <section id="noi-bat" class="section dark journey">
+    <div class="wrap">
+      <div class="head-row reveal">
+        <div><p class="eyebrow">Dự án nổi bật</p><h2>Năm hướng giải pháp</h2></div>
+        <p class="muted pos" aria-live="polite"><span id="posNow">01</span> / {pad(featured.length)}</p>
+      </div>
+      <div class="show" id="show">
+        <div class="stage-col">
+          <div class="stage" aria-hidden="true">
+            {featured.map((p, i) => (
+              <div class:list={['st', i === 0 && 'on']} data-stage={i}><Scene kind={p.art} tone="dark" depths={[0, 0, 0]} /></div>
+            ))}
+            <span class="stage-note">Hình minh họa · không phải ảnh hệ thống thật</span>
+          </div>
+          <div class="stepper">
+            <button type="button" id="prev" aria-label="Dự án trước">‹</button>
+            <button type="button" id="next" aria-label="Dự án tiếp theo">›</button>
+          </div>
+        </div>
+        <ol class="list" id="flist">
+          <span class="rail" aria-hidden="true"><i id="dot"></i></span>
+          {featured.map((p, i) => (
+            <li class:list={['reveal', i === 0 && 'on']} data-item={i} style={`--d:${i}`}>
+              <span class="num">{pad(i + 1)}</span>
+              <div class="txt">
+                <h3><a href={`${base}/projects/${p.slug}/`}>{p.title}</a></h3>
+                <p>{p.summary}</p>
+                <p class="meta">{p.industryIds.map((id) => nameOf(getIndustries(), id)).join(' · ')}</p>
+                <a class="link-arrow more" href={`${base}/projects/${p.slug}/`}>Xem dự án<span class="sr"> {p.title}</span></a>
+              </div>
+              <div class="inline-scene"><Scene kind={p.art} tone="dark" depths={[0, 0, 0]} thumb /></div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- TẤT CẢ DỰ ÁN -->
+  <section id="tat-ca" class="section all">
+    <div class="wrap">
+      <div class="head-row">
+        <div><p class="eyebrow">Danh sách đầy đủ</p><h2>Tất cả dự án</h2></div>
+        <p class="muted count" id="count" role="status" aria-live="polite">{projects.length} dự án</p>
+      </div>
+      <div class="grid" id="list">{projects.map((p, i) => <ProjectCard project={p} index={i} />)}</div>
+      <div class="empty" id="none" hidden>Không tìm thấy dự án phù hợp. Hãy thử từ khóa khác hoặc xóa bộ lọc.</div>
+    </div>
+  </section>
+
+  <!-- LIÊN HỆ -->
+  <section class="section dark closing">
+    <div class="wrap contact reveal">
+      <div>
+        <h2>Cùng trao đổi bài toán của bạn.</h2>
+        <p class="muted">Gửi tôi tên dự án bạn quan tâm qua Zalo. Trang web này không thu thập thông tin của bạn.</p>
+      </div>
+      <div class="cta-row">
+        <ZaloButton label="Trao đổi qua Zalo" variant="accent" source="projects-contact" />
+        <a class="btn light" href={`${base}/lien-he/`}>Cách liên hệ</a>
+      </div>
+    </div>
+  </section>
 </Base>
 
 <script>
+  // ---- Bộ lọc ----
   const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().trim();
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
   const q = $<HTMLInputElement>('q'), ind = $<HTMLSelectElement>('ind'), sol = $<HTMLSelectElement>('sol');
-  const clear = $('clear'), count = $('count'), none = $('none');
+  const clear = $('clear'), count = $('count'), none = $('none'), goN = $('goN');
   const cards = [...document.querySelectorAll<HTMLElement>('[data-card]')];
   const index = cards.map((c) => ({ c, text: norm(c.dataset.text ?? ''), ind: (c.dataset.ind ?? '').split(' '), sol: (c.dataset.sol ?? '').split(' ') }));
-
   function apply() {
     const term = norm(q.value);
     let n = 0;
@@ -40,22 +133,137 @@ const solutions = getSolutions().filter((i) => projects.some((p) => p.solutionId
       r.c.hidden = !ok; if (ok) n++;
     }
     count.textContent = `${n} dự án`;
+    goN.textContent = String(n);
     none.hidden = n !== 0;
     clear.hidden = !(term || ind.value || sol.value);
   }
   [q, ind, sol].forEach((el) => el.addEventListener('input', apply));
   clear.addEventListener('click', () => { q.value = ''; ind.value = ''; sol.value = ''; apply(); q.focus(); });
+
+  // ---- Dự án nổi bật: hình lớn + thước tiến trình ----
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const stages = [...document.querySelectorAll<HTMLElement>('[data-stage]')];
+  const items = [...document.querySelectorAll<HTMLElement>('[data-item]')];
+  const posNow = $('posNow'), dot = $('dot'), flist = $('flist');
+  let current = 0;
+  function activate(i: number) {
+    if (i === current) return;
+    current = i;
+    stages.forEach((s, k) => s.classList.toggle('on', k === i));
+    items.forEach((s, k) => s.classList.toggle('on', k === i));
+    posNow.textContent = String(i + 1).padStart(2, '0');
+  }
+  if (items.length && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) activate(Number((e.target as HTMLElement).dataset.item)); }, { rootMargin: '-42% 0px -45% 0px' });
+    items.forEach((it) => io.observe(it));
+  }
+  items.forEach((it, i) => { it.addEventListener('mouseenter', () => activate(i)); it.addEventListener('focusin', () => activate(i)); });
+  const step = (d: number) => {
+    const i = Math.max(0, Math.min(items.length - 1, current + d));
+    items[i].scrollIntoView({ block: 'center', behavior: reduce.matches ? 'auto' : 'smooth' });
+    activate(i);
+  };
+  $('prev').addEventListener('click', () => step(-1));
+  $('next').addEventListener('click', () => step(1));
+  // Điểm đánh dấu trên thước dịch theo tiến trình cuộn qua danh sách.
+  let tick = false;
+  function rail() {
+    tick = false;
+    const r = flist.getBoundingClientRect();
+    const p = Math.max(0, Math.min(1, (window.innerHeight * 0.5 - r.top) / r.height));
+    dot.style.top = (p * 100).toFixed(1) + '%';
+  }
+  window.addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(rail); } }, { passive: true });
+  rail();
 </script>
 
 <style>
-  .pg-title { margin: 20px 0 12px; }
-  .filters { display: flex; flex-wrap: wrap; gap: 14px; align-items: end; margin-bottom: 14px; }
-  .field { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
-  .field.grow { flex: 1 1 260px; }
-  .field:not(.grow) { flex: 1 1 200px; }
-  .field select { width: 100%; }
-  .field input, .field select { min-height: 40px; padding: 0 12px; border: 1px solid #c9c9c9; border-radius: 8px; background: #fff; font: 400 15px var(--font); color: var(--ink); }
-  .field input:focus, .field select:focus { border-color: var(--ink); outline: none; box-shadow: 0 0 0 3px rgba(10,79,214,.18); }
-  .count { color: var(--muted); font-size: 14px; margin: 8px 0 16px; }
   [hidden] { display: none !important; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* HERO */
+  .hero { position: relative; overflow: hidden; padding: 104px 0 76px;
+    background: radial-gradient(760px 320px at 76% 34%, rgba(255,255,255,.95), transparent 70%), linear-gradient(180deg, #b9d2f6 0%, #d6e5fa 48%, var(--bg) 100%); }
+  .ghost { position: absolute; left: 50%; top: 40px; transform: translateX(-50%); z-index: 0; font: 700 clamp(120px, 17vw, 244px)/.95 var(--display); letter-spacing: .01em; color: rgba(255,255,255,.96); white-space: nowrap; pointer-events: none; user-select: none;
+    -webkit-mask-image: linear-gradient(180deg, #000 58%, transparent 100%); mask-image: linear-gradient(180deg, #000 58%, transparent 100%); }
+  .hero-in { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(16px, 3vw, 40px); align-items: end; min-height: 320px; }
+  .hero-copy { padding-bottom: 8px; }
+  .lead { font-size: 15.5px; color: #2f3b54; max-width: 46ch; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .hero-scene { position: relative; height: 330px; }
+  .hs { position: absolute; }
+  .hs.main { right: 0; top: 44px; width: min(100%, 500px); }
+  .hs.side-a { left: -4%; bottom: -8%; width: 56%; }
+  .hs.side-b { right: 2%; bottom: -14%; width: 40%; }
+  .scene-note { position: absolute; right: 0; bottom: -34px; margin: 0; font-size: 12px; color: #3b4863; }
+
+  /* THANH TÌM — nổi lên chồng mép hero */
+  .find-wrap { position: relative; z-index: 3; margin-top: -34px; }
+  .find { display: grid; grid-template-columns: 1.5fr 1fr 1fr auto; gap: 4px; align-items: center; background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: 8px 8px 8px 20px; box-shadow: 0 18px 40px rgba(11,20,36,.12); }
+  .cell { display: grid; gap: 1px; padding: 4px 14px 4px 0; border-right: 1px solid var(--line); min-width: 0; }
+  .cell:nth-of-type(n+2) { padding-left: 14px; }
+  .cell span { font-size: 11.5px; color: var(--muted); }
+  .cell input, .cell select { border: 0; background: transparent; font: 500 14.5px var(--font); color: var(--ink); min-height: 28px; padding: 0; width: 100%; min-width: 0; }
+  .cell input:focus, .cell select:focus { outline: none; }
+  .cell:focus-within { box-shadow: inset 0 -2px 0 var(--accent); }
+  .acts { display: flex; align-items: center; gap: 10px; padding-left: 12px; }
+  .clear { border: 0; background: transparent; color: var(--ink); font: 500 13.5px var(--font); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 40px; padding: 0 6px; }
+  .go { white-space: nowrap; }
+
+  /* DỰ ÁN NỔI BẬT */
+  .journey { margin-top: -34px; padding-top: calc(34px + clamp(36px, 5vw, 60px)); }
+  .pos { font: 600 22px var(--display); letter-spacing: .06em; margin: 0; }
+  .show { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(24px, 4vw, 56px); align-items: start; }
+  .stage-col { position: sticky; top: 80px; }
+  .stage { position: relative; aspect-ratio: 3 / 2; border: 1px solid var(--navy-line); border-radius: 16px; overflow: hidden; background: radial-gradient(500px 260px at 70% 20%, #1b2f55, var(--navy-2)); }
+  .st { position: absolute; inset: 0; opacity: 0; transition: opacity .35s ease; }
+  .st.on { opacity: 1; }
+  .stage-note { position: absolute; left: 14px; bottom: 10px; font-size: 12px; color: var(--on-dark-muted); }
+  .stepper { display: flex; gap: 8px; margin-top: 12px; }
+  .stepper button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #5a6a8a; background: transparent; color: var(--on-dark); font: 500 20px/1 var(--font); cursor: pointer; transition: background .18s ease, border-color .18s ease; }
+  .stepper button:hover { background: rgba(255,255,255,.08); border-color: var(--on-dark); }
+
+  .list { list-style: none; margin: 0; padding: 0 0 0 36px; position: relative; }
+  .rail { position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--navy-line); }
+  .rail i { position: absolute; left: -5px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px rgba(255,107,44,.22); transition: top .12s linear; }
+  .list li { display: grid; grid-template-columns: 52px 1fr; gap: 6px; padding: 26px 0 28px; border-top: 1px solid var(--navy-line); color: var(--on-dark-muted); transition: color .2s ease; }
+  .list li:first-of-type { border-top: 0; }
+  .list li.on { color: var(--on-dark); }
+  .num { font: 700 34px/1 var(--display); letter-spacing: .02em; color: #3b4f76; transition: color .2s ease; }
+  .list li.on .num { color: var(--accent); }
+  .txt h3 { margin: 0 0 4px; font-size: 18px; }
+  .txt h3 a { text-decoration: none; }
+  .txt p { margin: 0 0 4px; font-size: 14px; }
+  .txt .meta { font-size: 12.5px; opacity: .8; }
+  .more { display: inline-block; margin-top: 8px; font-size: 14px; color: var(--on-dark); }
+  .inline-scene { display: none; }
+
+  /* TẤT CẢ DỰ ÁN */
+  .all { background: var(--bg); }
+  .count { margin: 0; font-size: 14px; }
+
+  /* LIÊN HỆ */
+  .closing { border-top: 1px solid var(--navy-line); }
+  .contact { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .contact h2 { margin-bottom: 6px; }
+  .contact .cta-row { margin: 0; }
+
+  @media (max-width: 860px) {
+    .hero { padding: 96px 0 60px; }
+    .ghost { top: 120px; font-size: clamp(96px, 30vw, 180px); }
+    .hero-in { grid-template-columns: 1fr; min-height: 0; }
+    .hero-scene { height: 250px; margin-top: 10px; }
+    .hs.main { width: 82%; }
+    .find { grid-template-columns: 1fr; border-radius: 18px; padding: 12px 16px; gap: 6px; }
+    .cell { border-right: 0; border-bottom: 1px solid var(--line); padding: 6px 0; }
+    .cell:nth-of-type(n+2) { padding-left: 0; }
+    .acts { padding: 8px 0 0; justify-content: space-between; }
+    .show { grid-template-columns: 1fr; }
+    .stage-col { display: none; }               /* mobile: luồng dọc, mỗi mục có hình riêng ngay cạnh tiêu đề */
+    .list { padding-left: 0; }
+    .rail { display: none; }
+    .list li { grid-template-columns: 1fr; color: var(--on-dark); padding: 18px 0 20px; }
+    .num { font-size: 26px; }
+    .inline-scene { display: block; order: -1; margin-bottom: 10px; border: 1px solid var(--navy-line); border-radius: 12px; overflow: hidden; }
+  }
 </style>

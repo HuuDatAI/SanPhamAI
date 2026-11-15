@@ -1,0 +1,71 @@
+---
+/**
+ * Hình minh họa nhiều lớp (vẽ bằng SVG, KHÔNG phải ảnh chụp hệ thống thật, không chứa số liệu hay chữ giả).
+ * Ba lớp xếp chồng: l0 (khung nền), l1 (thẻ giữa), l2 (chip nổi). Mỗi lớp có thể có hệ số parallax riêng (data-depth)
+ * khi nằm trong khung [data-scene]. Chỉ dùng hình dạng trừu tượng để không hàm ý tính năng thật.
+ */
+import type { Kind } from '../data/seed';
+interface Props { kind: Kind; tone?: 'light' | 'dark'; layers?: Array<'l0' | 'l1' | 'l2'>; depths?: [number, number, number]; thumb?: boolean }
+const { kind, tone = 'light', layers = ['l0', 'l1', 'l2'], depths, thumb = false } = Astro.props;
+const map: Record<Kind, [string, string, string]> = {
+  funnel: ['bars', 'chart', 'dot'], people: ['rows', 'calmini', 'check'], chat: ['bubbles', 'list', 'dot'],
+  lms: ['tiles', 'progress', 'ring'], building: ['plan', 'doc', 'square'], sheet: ['grid', 'chart', 'dot'],
+  cards: ['kanban', 'list', 'square'], calendar: ['calendar', 'progress', 'check'],
+};
+const [a, b, c] = map[kind];
+const d = depths ?? [-0.35, 0.25, 0.8];
+---
+<div class:list={['scene', tone, thumb && 'thumb']} role="img" aria-label="Hình minh họa, không phải ảnh chụp hệ thống thật">
+  {layers.includes('l0') && (
+    <svg class="ly" data-depth={d[0]} viewBox="0 0 480 320" preserveAspectRatio={thumb ? 'xMidYMid slice' : 'xMidYMid meet'} aria-hidden="true">
+      <rect class="p" x="28" y="26" width="318" height="216" rx="16" />
+      <circle class="f" cx="50" cy="48" r="4.5" /><circle class="f" cx="66" cy="48" r="4.5" /><circle class="f" cx="82" cy="48" r="4.5" />
+      <path class="ln" d="M28 66H346" />
+      {a === 'bars' && <g><rect class="f" x="56" y="84" width="262" height="22" rx="6" /><rect class="f" x="82" y="114" width="210" height="22" rx="6" /><rect class="f" x="108" y="144" width="158" height="22" rx="6" /><rect class="f" x="134" y="174" width="106" height="22" rx="6" /><rect class="ac" x="158" y="204" width="58" height="22" rx="6" /></g>}
+      {a === 'rows' && <g>{[0, 1, 2, 3].map((i) => <g><circle class="f" cx="62" cy={92 + i * 36} r="12" /><rect class="f" x="84" y={84 + i * 36} width="150" height="9" rx="4.5" /><rect class="f" x="84" y={99 + i * 36} width="96" height="7" rx="3.5" /><rect class={i === 1 ? 'ac' : 'f'} x="270" y={86 + i * 36} width="52" height="18" rx="9" /></g>)}</g>}
+      {a === 'bubbles' && <g><rect class="f" x="52" y="84" width="170" height="38" rx="14" /><rect class="f" x="140" y="136" width="170" height="38" rx="14" /><rect class="f" x="52" y="188" width="132" height="38" rx="14" /><path class="ln" d="M70 100H190M70 112H150M158 152H290M158 164H240M70 204H160" /></g>}
+      {a === 'tiles' && <g>{[0, 1, 2].map((i) => <g><rect class="f" x={48 + i * 100} y="84" width="88" height="62" rx="10" /><rect class="f" x={48 + i * 100} y="156" width="88" height="62" rx="10" /></g>)}<rect class="ac" x="48" y="84" width="88" height="8" rx="4" /></g>}
+      {a === 'plan' && <g><rect class="ln" x="52" y="84" width="270" height="142" rx="4" /><path class="ln" d="M52 150H170M170 84V226M240 84V150M240 188H322" /><rect class="ac" x="170" y="140" width="22" height="10" /></g>}
+      {a === 'grid' && <g><path class="ln" d="M52 92H322M52 124H322M52 156H322M52 188H322M52 220H322M132 80V232M212 80V232M262 80V232" /><rect class="ac" x="214" y="126" width="46" height="28" rx="3" opacity=".9" /></g>}
+      {a === 'kanban' && <g>{[0, 1, 2].map((i) => <g><rect class="f" x={48 + i * 100} y="84" width="88" height="142" rx="8" /><rect class={i === 1 ? 'ac' : 'p'} x={56 + i * 100} y="96" width="72" height="30" rx="6" /><rect class="p" x={56 + i * 100} y="134" width="72" height="30" rx="6" /></g>)}</g>}
+      {a === 'calendar' && <g><path class="ln" d="M52 88H322" />{[0, 1, 2, 3, 4].map((r) => [0, 1, 2, 3, 4, 5].map((q) => <rect class={r === 2 && q === 3 ? 'ac' : 'f'} x={52 + q * 46} y={98 + r * 26} width="38" height="18" rx="4" />))}</g>}
+    </svg>
+  )}
+  {layers.includes('l1') && (
+    <svg class="ly" data-depth={d[1]} viewBox="0 0 480 320" preserveAspectRatio={thumb ? 'xMidYMid slice' : 'xMidYMid meet'} aria-hidden="true">
+      <rect class="p" x="226" y="104" width="226" height="170" rx="14" />
+      {b === 'chart' && <g><path class="ln" d="M250 246H430" /><path class="area" d="M252 220L290 196L328 206L366 160L404 142L428 126V246H252Z" /><path class="ln hi" d="M252 220L290 196L328 206L366 160L404 142L428 126" /></g>}
+      {b === 'calmini' && <g>{[0, 1, 2].map((r) => [0, 1, 2, 3].map((q) => <rect class={r === 1 && q === 2 ? 'ac' : 'f'} x={250 + q * 50} y={128 + r * 40} width="40" height="30" rx="6" />))}</g>}
+      {b === 'list' && <g>{[0, 1, 2].map((i) => <g><circle class="f" cx="256" cy={136 + i * 44} r="10" /><rect class="f" x="276" y={128 + i * 44} width="130" height="8" rx="4" /><rect class="f" x="276" y={142 + i * 44} width="84" height="7" rx="3.5" /></g>)}</g>}
+      {b === 'progress' && <g>{[0, 1, 2].map((i) => <g><rect class="f" x="250" y={132 + i * 40} width="178" height="12" rx="6" /><rect class={i === 0 ? 'ac' : 'ink'} x="250" y={132 + i * 40} width={[132, 96, 60][i]} height="12" rx="6" /></g>)}</g>}
+      {b === 'doc' && <g><rect class="f" x="250" y="128" width="84" height="118" rx="6" /><path class="ln" d="M266 152H318M266 168H318M266 184H300M356 140H430M356 158H416M356 176H424M356 194H400" /></g>}
+    </svg>
+  )}
+  {layers.includes('l2') && (
+    <svg class="ly" data-depth={d[2]} viewBox="0 0 480 320" preserveAspectRatio={thumb ? 'xMidYMid slice' : 'xMidYMid meet'} aria-hidden="true">
+      <rect class="p chip" x="52" y="238" width="168" height="48" rx="24" />
+      {c === 'dot' && <g><circle class="ac" cx="80" cy="262" r="12" /><rect class="f" x="102" y="254" width="94" height="8" rx="4" /><rect class="f" x="102" y="268" width="60" height="6" rx="3" /></g>}
+      {c === 'check' && <g><circle class="ac" cx="80" cy="262" r="12" /><path class="ln dk" d="M74 262l5 5 9-10" /><rect class="f" x="102" y="254" width="94" height="8" rx="4" /><rect class="f" x="102" y="268" width="60" height="6" rx="3" /></g>}
+      {c === 'ring' && <g><circle class="f" cx="80" cy="262" r="13" /><path class="ln hi" d="M80 249a13 13 0 0 1 12.4 9" /><rect class="f" x="102" y="254" width="94" height="8" rx="4" /><rect class="f" x="102" y="268" width="60" height="6" rx="3" /></g>}
+      {c === 'square' && <g><rect class="ac" x="68" y="250" width="24" height="24" rx="6" /><rect class="f" x="102" y="254" width="94" height="8" rx="4" /><rect class="f" x="102" y="268" width="60" height="6" rx="3" /></g>}
+    </svg>
+  )}
+</div>
+
+<style is:global>
+  .scene { --p: #ffffff; --pl: #cdd7e6; --f: #e7edf6; --ink-s: #0b1220; --sh: rgba(11,20,36,.14); position: relative; width: 100%; aspect-ratio: 3 / 2; }
+  .scene.thumb { aspect-ratio: 16 / 8; background: linear-gradient(160deg, #e9f0fb, #f5f7fa); overflow: hidden; }
+  .scene.dark.thumb { background: linear-gradient(160deg, #182a49, #111d33); }
+  @media (max-width: 860px) { .scene.thumb { aspect-ratio: 16 / 6; } }
+  .scene.dark { --p: #14233d; --pl: #2c3f61; --f: #1f3253; --ink-s: #eaf0fb; --sh: rgba(0,0,0,.4); }
+  .scene .ly { position: absolute; inset: 0; width: 100%; height: 100%; will-change: transform; overflow: visible; }
+  .scene .p { fill: var(--p); stroke: var(--pl); stroke-width: 1.2; }
+  .scene .f { fill: var(--f); }
+  .scene .ac { fill: var(--accent); }
+  .scene .ink { fill: var(--ink-s); }
+  .scene .ln { fill: none; stroke: var(--pl); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .scene .ln.hi { stroke: var(--accent); stroke-width: 2.6; }
+  .scene .ln.dk { stroke: #0b1220; stroke-width: 2.4; }
+  .scene .area { fill: color-mix(in srgb, var(--accent) 16%, transparent); stroke: none; }
+  .scene .ly:nth-of-type(2) .p, .scene .ly:nth-of-type(3) .p { filter: drop-shadow(0 12px 18px var(--sh)); }
+</style>
