@@ -18,3 +18,6 @@ Mỗi thư mục ghi rõ chụp tại revision nào. **Chỉ `f1/` phản ánh b
 
 ## f2 — bằng chứng cho revision `54f3739` (16/11, chạy local, desktop 1440 px, reduced-motion bật)
 `docs/evidence/f2/`: d-home, d-projects, d-lms, d-xaydung, d-chuyenmon, d-ketoan, d-gioithieu. Thay thế `f1/` làm bằng chứng HEAD. Chưa có bản mobile lưu tệp (đã đo không tràn ngang ở 375 px bằng số) và chưa chụp 3 dự án còn lại.
+
+## f4 — bìa khóa học V2 (nhánh feat/course-covers-v2, code ở commit 7b6069b, chạy local, reduced-motion bật)
+`docs/evidence/f4/`: desktop (Chuyên môn, trang chủ, 10 trang chi tiết), mobile 375 px (Chuyên môn, trang chủ) và 390 px (Chuyên môn, trang chủ, 10 trang chi tiết). Chụp sau thay đổi, thay thế f1–f3 cho nội dung bìa. Ảnh bìa là artwork thiết kế, không phải ảnh lớp học hay screenshot phần mềm.
