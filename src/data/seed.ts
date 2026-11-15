@@ -95,14 +95,6 @@ export const projects: Project[] = [
     industryIds: ['ind-ban-hang'], solutionIds: ['sol-ai', 'sol-du-lieu'], technologies: [], features: [],
     verification: 'owner_confirmed', problem: '', role: '', scope: 'Giải pháp AI hỗ trợ phân tích hiệu quả bán hàng.', solutionBlocks: [], outcomes: [],
     featured: true, sortOrder: 2, isSample: false, art: 'funnel', motionPreset: 'narrative',
-    images: [
-      { key: 'sales-1', sourceType: 'ai_illustration', isIllustrative: true,
-        alt: 'Giao diện minh họa tổng quan bán hàng gồm doanh thu theo tuần, phễu cơ hội và hiệu quả theo kênh',
-        caption: 'Tổng quan bán hàng · Giao diện minh họa — dữ liệu mẫu' },
-      { key: 'sales-2', sourceType: 'ai_illustration', isIllustrative: true,
-        alt: 'Giao diện minh họa báo cáo hiệu quả theo kênh bán hàng: doanh thu, đơn hàng và giá trị đơn trung bình',
-        caption: 'Hiệu quả theo kênh · Giao diện minh họa — dữ liệu mẫu' },
-    ],
   },
   {
     id: 'p-tu-van', slug: 'ai-tu-van-khach-hang-da-kenh', title: 'AI tư vấn khách hàng đa kênh',
