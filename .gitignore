@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.astro/
+.clasp.json
+.clasprc.json
+backend/_local*.js
+.env*

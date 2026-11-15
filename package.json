@@ -1,0 +1,12 @@
+{
+  "name": "du-an",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "backend:push": "clasp push",
+    "backend:check": "node --check backend/Core.js && node --check backend/Media.js && node --check backend/Api.js && node --check backend/Poc.js"
+  },
+  "devDependencies": {
+    "@google/clasp": "^3.4.1"
+  }
+}
