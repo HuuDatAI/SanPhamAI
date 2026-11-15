@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Scene from '../../components/Scene.astro';
+import CourseCover from '../../components/CourseCover.astro';
 import Icon from '../../components/Icon.astro';
 import ZaloButton from '../../components/ZaloButton.astro';
 import CopyLink from '../../components/CopyLink.astro';
@@ -23,7 +23,7 @@ let n = 0; const num = () => String(++n).padStart(2, '0');
     <nav class="crumbs" aria-label="Điều hướng phụ"><a href={`${base}/chuyen-mon/`}>← Quay lại Chuyên môn</a></nav>
     <div class="detail">
       <aside class="side">
-        <div class="side-box"><Scene kind={c.art} depths={[0, 0, 0]} /></div>
+        <div class="side-box"><CourseCover course={c} sizes="(max-width: 860px) 100vw, 480px" loading="eager" /></div>
       </aside>
       <article class="story">
         <header class="reveal">
