@@ -73,7 +73,7 @@ const shortCap = (c: string) => c.split(' · ')[0];
           </section>
         )}
         {(solution.length > 0 || observed.length > 0 || caveats.length > 0 || p.technologies.length > 0) && (
-          <section class="reveal"><h2><span>{num()}</span>Giải pháp</h2>
+          <section class="reveal"><h2><span>{num()}</span>{p.solutionHeading ?? 'Giải pháp'}</h2>
             {solution.length > 0 && <ul>{solution.map((x) => <li>{x}</li>)}</ul>}
             {observed.length > 0 && (
               <div>
@@ -91,11 +91,12 @@ const shortCap = (c: string) => c.split(' · ')[0];
             {demo && <p><a class="btn line" href={demo} target="_blank" rel="noopener noreferrer">Dùng thử</a></p>}
           </section>
         )}
+        {p.value && <section class="reveal"><h2><span>{num()}</span>Giá trị hướng đến</h2><p>{p.value}</p></section>}
         {p.outcomes.length > 0 && <section class="reveal"><h2><span>{num()}</span>Kết quả</h2><ul>{p.outcomes.map((x) => <li>{x}</li>)}</ul></section>}
 
         <aside class="ask reveal">
-          <h2>Cần giải pháp tương tự?</h2>
-          <p class="muted">Gửi tên dự án qua Zalo để trao đổi. Bạn có thể sao chép tên và đường dẫn để gửi kèm.</p>
+          <h2>{p.cta ? 'Trao đổi với tôi' : 'Cần giải pháp tương tự?'}</h2>
+          <p class="muted">{p.cta ? p.cta + ' ' : ''}Gửi tên dự án qua Zalo để trao đổi; có thể sao chép tên và đường dẫn để gửi kèm.</p>
           <div class="cta-row">
             <ZaloButton label="Tư vấn làm dự án tương tự" source="project" entity={p.id} />
             <CopyLink title={p.title} />

@@ -1,3 +1,4 @@
+import { details } from './details';
 /**
  * Dữ liệu seed — chế độ "mẫu". Sẽ được thay bằng backend thật qua src/lib/store.ts.
  * Quy tắc nội dung (BA-004/006/007): không tên công ty/trường, không link tổ chức, không số liệu/tính năng bịa.
@@ -39,6 +40,12 @@ export interface Project {
   /** Bộ ảnh (ảnh đầu tiên là ảnh bìa): chỉ tham chiếu khóa trong src/data/media.ts.
    *  sourceType = ai_illustration: ảnh do AI tạo, dữ liệu mẫu — luôn hiện nhãn ngoài ảnh; isIllustrative bắt buộc true. */
   images?: ProjectImage[];
+  /** Tiêu đề khối giải pháp (mặc định "Giải pháp"); "Hướng tiếp cận" khi chưa xác minh tính năng. */
+  solutionHeading?: string;
+  /** Giá trị hướng đến (định tính, không số liệu). */
+  value?: string;
+  /** Câu mời trao đổi riêng của dự án. */
+  cta?: string;
 }
 
 export interface Course {
@@ -66,7 +73,7 @@ export const solutions: Category[] = [
   { id: 'sol-tu-dong', name: 'Tự động hóa', slug: 'tu-dong-hoa' },
 ];
 
-export const projects: Project[] = [
+const baseProjects: Project[] = [
   {
     id: 'p-tuyen-dung', slug: 'he-thong-ho-tro-tuyen-dung', title: 'Hệ thống hỗ trợ tuyển dụng với AI & tự động hóa',
     summary: 'Tôi phát triển hệ thống hỗ trợ quản lý tuyển dụng, phân tích hồ sơ ứng viên và điều phối lịch phỏng vấn.',
@@ -115,6 +122,8 @@ export const projects: Project[] = [
     ],
   },
 ];
+
+export const projects: Project[] = baseProjects.map((p) => ({ ...p, ...(details[p.id] ?? {}) }));
 
 export const courses: Course[] = [
   { id: 'c-automation', slug: 'ai-automation', title: 'AI Automation',
