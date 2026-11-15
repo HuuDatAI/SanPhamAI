@@ -87,10 +87,3 @@ export const courseList: Course[] = [
     structure: 'Chương trình tham khảo: 11 buổi, 3 nhóm (Excel nền; xử lý và phân tích; dashboard và trình bày); điều chỉnh theo nhu cầu.',
     ...common, featured: false, sortOrder: 10, art: 'sheet' },
 ];
-
-/** Nhóm lớp khác chủ website đã hướng dẫn; chưa có đề cương chi tiết nên chỉ giới thiệu ngắn, không liệt kê module. */
-export const otherClasses = [
-  'AI và ChatGPT cho kinh doanh',
-  'AI hỗ trợ coaching',
-  'Tập huấn AI theo nhu cầu phòng ban: hành chính tổng hợp, quản lý cơ sở vật chất',
-];
