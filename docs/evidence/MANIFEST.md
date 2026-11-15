@@ -13,3 +13,5 @@ Mỗi thư mục ghi rõ chụp tại revision nào. **Chỉ `f1/` phản ánh b
 - Ảnh `rm-*` và ảnh thường gần giống vì viewport cao khiến mọi phần tử reveal đã hiện; sự khác biệt chuyển động được đo bằng script, không thấy được trong ảnh tĩnh.
 - Ảnh tĩnh không chứng minh chuyển động. Số đo chuyển động nằm trong báo cáo kiểm thử.
 - Ảnh trong `f1/` lưu cùng commit chứa tệp này (commit ngay sau `e74286c`).
+
+> Ghi chú 16/11: ảnh chụp trong `f1/` (revision `e74286c`) được chụp TRƯỚC khi gỡ ảnh AI; các ảnh đó còn hiển thị ảnh AI đã bị gỡ. Chỉ dùng làm tư liệu lịch sử, không phản ánh giao diện hiện tại.

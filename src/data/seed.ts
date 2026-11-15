@@ -77,17 +77,6 @@ export const projects: Project[] = [
     caveats: [
       'Hướng thiết kế: AI hỗ trợ tổng hợp và đối chiếu hồ sơ theo tiêu chí công việc có dẫn chứng; người làm nhân sự xem xét và quyết định. Không tự động loại hay tuyển ứng viên.',
     ],
-    images: [
-      { key: 'recruitment-1', sourceType: 'ai_illustration', isIllustrative: true,
-        alt: 'Giao diện minh họa danh sách ứng viên theo vị trí và vòng tuyển dụng, kèm thông tin hồ sơ đang chọn',
-        caption: 'Quản lý ứng viên · Giao diện minh họa — dữ liệu mẫu' },
-      { key: 'recruitment-2', sourceType: 'ai_illustration', isIllustrative: true,
-        alt: 'Giao diện minh họa đối chiếu hồ sơ với tiêu chí công việc, mỗi tiêu chí có trích dẫn từ CV; người làm nhân sự xem xét và ghi chú',
-        caption: 'Đối chiếu hồ sơ với tiêu chí công việc · Giao diện minh họa — dữ liệu mẫu' },
-      { key: 'recruitment-3', sourceType: 'ai_illustration', isIllustrative: true,
-        alt: 'Giao diện minh họa lịch phỏng vấn theo tuần và quy trình xác nhận lịch',
-        caption: 'Điều phối lịch phỏng vấn · Giao diện minh họa — dữ liệu mẫu' },
-    ],
   },
   {
     id: 'p-ban-hang', slug: 'ai-phan-tich-hieu-qua-ban-hang', title: 'AI phân tích hiệu quả bán hàng',
@@ -102,14 +91,6 @@ export const projects: Project[] = [
     industryIds: ['ind-tmdt', 'ind-ban-hang'], solutionIds: ['sol-ai', 'sol-tu-dong'], technologies: [], features: [],
     verification: 'owner_confirmed', problem: '', role: '', scope: 'AI tư vấn khách hàng qua mạng xã hội và các kênh thương mại điện tử.', solutionBlocks: [], outcomes: [],
     featured: true, sortOrder: 3, isSample: false, art: 'chat', motionPreset: 'narrative',
-    images: [
-      { key: 'support-1', sourceType: 'ai_illustration', isIllustrative: true,
-        alt: 'Giao diện minh họa hộp thư đa kênh: danh sách hội thoại, nội dung trao đổi và gợi ý trả lời nháp để nhân viên kiểm tra',
-        caption: 'Hộp thư đa kênh · Giao diện minh họa — dữ liệu mẫu' },
-      { key: 'support-2', sourceType: 'ai_illustration', isIllustrative: true,
-        alt: 'Giao diện minh họa kho kiến thức đã duyệt và kiểm tra câu trả lời có căn cứ trước khi gửi',
-        caption: 'Kiến thức và kiểm tra câu trả lời · Giao diện minh họa — dữ liệu mẫu' },
-    ],
   },
   {
     id: 'p-lms', slug: 'lms-cho-doanh-nghiep', title: 'LMS cho doanh nghiệp',
