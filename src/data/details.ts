@@ -60,6 +60,30 @@ export const details: Record<string, Detail> = {
     ],
     value: 'Hỗ trợ đội ngũ tư vấn tiếp cận câu hỏi của khách có hệ thống hơn, đồng thời giữ vai trò kiểm soát nội dung và xử lý tình huống của con người.',
     cta: 'Khách của bạn đang hỏi nhiều nhất ở kênh nào? Trao đổi với tôi về nội dung tư vấn và cách đội ngũ đang phản hồi để xác định phạm vi ứng dụng AI phù hợp.',
+    images: [
+      { key: 'tv-1', sourceType: 'screenshot_redacted', alt: 'Kịch bản Welcome trên Zalo cá nhân nối tới block chào mừng gồm nhắn tin, chấp nhận và gửi lời mời kết bạn', caption: 'Kịch bản chào mừng khách mới trên Zalo' + NOTE },
+      { key: 'tv-2', sourceType: 'screenshot_redacted', alt: 'Nội dung tin nhắn chào mừng tự động kèm tên khách và câu hỏi khóa học cần tư vấn', caption: 'Tin nhắn chào mừng tự động cá nhân hóa theo tên khách' + NOTE },
+      { key: 'tv-3', sourceType: 'screenshot_redacted', alt: 'Cấu hình tự chấp nhận kết bạn và gửi lời mời kết bạn kèm tin nhắn mời tư vấn', caption: 'Tự chấp nhận và gửi lời mời kết bạn' + NOTE },
+      { key: 'tv-4', sourceType: 'screenshot_redacted', alt: 'Kịch bản Default Reply chuyển tin nhắn của khách qua JSON API tới hệ thống AI', caption: 'Default Reply: chuyển câu hỏi tới AI qua webhook' + NOTE },
+      { key: 'tv-5', sourceType: 'screenshot_redacted', alt: 'Kịch bản từ khóa gửi mã QR với các bước đang soạn tin, lưu thuộc tính và gửi tin nhắn', caption: 'Phản hồi theo từ khóa: gửi mã QR' + NOTE },
+      { key: 'tv-6', sourceType: 'screenshot_redacted', alt: 'Thư viện block dùng chung cho các kịch bản chăm sóc khách hàng', caption: 'Thư viện block dùng chung' + NOTE },
+    ],
+  },
+  'p-zalo-hang-loat': {
+    problem: 'Khi cần thông báo cho nhiều học viên hoặc khách hàng qua Zalo, nhân sự thường phải tra từng số điện thoại, kết bạn rồi gửi tin thủ công; việc theo dõi ai đã nhận tin cũng rời rạc.',
+    role: 'Tôi thiết kế và cấu hình luồng tự động trên nền tảng chatbot đa kênh, kết nối với Google Sheet.',
+    solutionBlocks: [
+      'Kích hoạt từ Google Sheet: khi dòng dữ liệu được cập nhật, luồng tự chạy cho người nhận tương ứng; cũng có thể chạy theo từng đợt broadcast.',
+      'Tìm và kết bạn: tra số điện thoại trên Zalo, gửi lời mời kết bạn và lưu thông tin Zalo của người nhận vào thuộc tính.',
+      'Rẽ nhánh theo kết quả: tìm thấy thì gửi tin nhắn Zalo cá nhân từ nick nhân viên và cập nhật trạng thái vào Google Sheet; không tìm thấy thì chuyển sang nhánh xử lý riêng.',
+    ],
+    images: [
+      { key: 'zl-1', sourceType: 'screenshot_redacted', alt: 'Luồng broadcast: tìm người nhận theo số điện thoại, kết bạn Zalo, rẽ nhánh tìm thấy hoặc không tìm thấy', caption: 'Luồng gửi tin và kết bạn Zalo theo đợt broadcast' + NOTE },
+      { key: 'zl-2', sourceType: 'screenshot_redacted', alt: 'Trigger Google Sheet Update Row khởi chạy luồng gửi tin Zalo cho từng dòng dữ liệu', caption: 'Kích hoạt tự động khi Google Sheet cập nhật' + NOTE },
+      { key: 'zl-3', sourceType: 'screenshot_redacted', alt: 'Các loại broadcast theo kênh: Facebook, Zalo Follow OA, Zalo ZBS, Zalo UID, Zalo Broadcast cá nhân', caption: 'Các kênh broadcast có thể dùng' + NOTE },
+    ],
+    value: 'Giảm thao tác tra cứu và nhắn tin thủ công, đồng thời có một bảng theo dõi tập trung ai đã được liên hệ.',
+    cta: 'Bạn cần gửi thông báo hoặc chăm sóc nhiều khách qua Zalo? Trao đổi với tôi về danh sách hiện có và nội dung cần gửi.',
   },
   'p-lms': {
     summary: 'Tôi phát triển hệ thống LMS giúp doanh nghiệp tổ chức đào tạo nội bộ trên một nền tảng: tập trung khóa học, xây dựng lộ trình và theo dõi quá trình học của nhân sự.',
