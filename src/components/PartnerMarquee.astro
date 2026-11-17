@@ -34,7 +34,7 @@ const photos = Object.keys(files).sort().map((k, i) => ({ src: files[k].default,
         <ul class="pm-set" aria-hidden={copy === 1 ? 'true' : undefined}>
           {photos.map((p) => (
             <li>
-              <Image src={p.src} alt={copy === 1 ? '' : p.alt} height={200} densities={[1, 2]} format="webp" quality={78} loading="lazy" />
+              <Image src={p.src} alt={copy === 1 ? '' : p.alt} height={200} densities={[1, 2]} format="webp" quality={78} loading="eager" decoding="async" fetchpriority="low" />
             </li>
           ))}
         </ul>
@@ -52,7 +52,7 @@ const photos = Object.keys(files).sort().map((k, i) => ({ src: files[k].default,
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
             mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   }
-  .pm-track { display: flex; width: max-content; animation: pm-run 60s linear infinite; }
+  .pm-track { display: flex; width: max-content; animation: pm-run 60s linear infinite; will-change: transform; }
   .pm-view:hover .pm-track, .pm-view:focus-within .pm-track { animation-play-state: paused; }
   .pm-set { display: flex; gap: 16px; list-style: none; margin: 0; padding: 0 16px 0 0; }
   .pm-set li { flex: none; height: 200px; border-radius: 14px; overflow: hidden; border: 1px solid var(--navy-line, rgba(255,255,255,.12)); background: #0b1220; }
