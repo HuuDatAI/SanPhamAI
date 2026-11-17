@@ -1,0 +1,71 @@
+---
+/**
+ * Dải ảnh chạy ngang (marquee) "Đồng hành cùng đối tác & học viên".
+ * Ảnh thật từ các buổi đào tạo; logo/tên đơn vị, tên học viên và SĐT bên thứ ba đã được che trắng trước khi đưa vào repo.
+ * Dải được nhân đôi để lặp liền mạch; bản sao ẩn với trình đọc màn hình. Giảm chuyển động -> cuộn ngang tay, không tự chạy.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props { title?: string; eyebrow?: string }
+const { title = 'Đồng hành cùng đối tác & học viên', eyebrow = 'Đối tác' } = Astro.props;
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/partners/doi-tac-*.webp', { eager: true });
+const alts = [
+  'Giảng viên tại sự kiện thuyết trình dự án AI',
+  'Học viên và giảng viên tại buổi thuyết trình dự án AI',
+  'Lớp xây dựng dashboard bằng Looker Studio cho doanh nghiệp',
+  'Học viên thực hành trên máy tính trong lớp học',
+  'Buổi hướng dẫn thực hành trong lớp học',
+  'Buổi học trực tuyến về VBA tự động hóa Excel',
+  'Buổi học trực tuyến về tiền xử lý dữ liệu (ETL)',
+  'Buổi học trực tuyến phân tích báo cáo tài chính',
+  'Giảng viên hướng dẫn trong phòng học',
+  'Buổi giao lưu cùng thầy cô và học viên',
+];
+const photos = Object.keys(files).sort().map((k, i) => ({ src: files[k].default, alt: alts[i] ?? 'Hình ảnh buổi đào tạo' }));
+---
+<div class="pm" role="region" aria-labelledby="pm-title">
+  <div class="wrap pm-head">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2 id="pm-title">{title}</h2>
+  </div>
+  <div class="pm-view">
+    <div class="pm-track">
+      {[0, 1].map((copy) => (
+        <ul class="pm-set" aria-hidden={copy === 1 ? 'true' : undefined}>
+          {photos.map((p) => (
+            <li>
+              <Image src={p.src} alt={copy === 1 ? '' : p.alt} height={200} densities={[1, 2]} format="webp" quality={78} loading="lazy" />
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .pm { margin-top: 40px; padding: 32px 0 8px; border-top: 1px solid var(--navy-line, rgba(255,255,255,.12)); }
+  .pm-head { margin-bottom: 18px; }
+  .pm-head h2 { margin: 0; font-size: clamp(20px, 2.4vw, 26px); }
+  .pm-view {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+  .pm-track { display: flex; width: max-content; animation: pm-run 60s linear infinite; }
+  .pm-view:hover .pm-track, .pm-view:focus-within .pm-track { animation-play-state: paused; }
+  .pm-set { display: flex; gap: 16px; list-style: none; margin: 0; padding: 0 16px 0 0; }
+  .pm-set li { flex: none; height: 200px; border-radius: 14px; overflow: hidden; border: 1px solid var(--navy-line, rgba(255,255,255,.12)); background: #0b1220; }
+  .pm-set :global(img) { display: block; height: 100%; width: auto; transition: transform .4s ease; }
+  .pm-set li:hover :global(img) { transform: scale(1.04); }
+  @keyframes pm-run { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (max-width: 860px) {
+    .pm-set li { height: 140px; }
+    .pm-track { animation-duration: 45s; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pm-view { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+    .pm-track { animation: none; }
+    .pm-set[aria-hidden] { display: none; }
+  }
+</style>
