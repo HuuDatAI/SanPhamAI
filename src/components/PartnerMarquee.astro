@@ -9,19 +9,19 @@ import type { ImageMetadata } from 'astro';
 interface Props { title?: string; eyebrow?: string }
 const { title = 'Đồng hành cùng đối tác & học viên', eyebrow = 'Đối tác' } = Astro.props;
 const files = import.meta.glob<{ default: ImageMetadata }>('../assets/partners/doi-tac-*.webp', { eager: true });
-const alts = [
-  'Giảng viên tại sự kiện thuyết trình dự án AI',
-  'Học viên và giảng viên tại buổi thuyết trình dự án AI',
-  'Lớp xây dựng dashboard bằng Looker Studio cho doanh nghiệp',
-  'Học viên thực hành trên máy tính trong lớp học',
-  'Buổi hướng dẫn thực hành trong lớp học',
-  'Buổi học trực tuyến về VBA tự động hóa Excel',
-  'Buổi học trực tuyến về tiền xử lý dữ liệu (ETL)',
-  'Buổi học trực tuyến phân tích báo cáo tài chính',
-  'Giảng viên hướng dẫn trong phòng học',
-  'Buổi giao lưu cùng thầy cô và học viên',
-];
-const photos = Object.keys(files).sort().map((k, i) => ({ src: files[k].default, alt: alts[i] ?? 'Hình ảnh buổi đào tạo' }));
+// Mô tả theo số ảnh trong tên tệp (doi-tac-NN), không theo thứ tự, để xóa/thêm ảnh không làm lệch mô tả.
+const alts: Record<string, string> = {
+  '01': 'Giảng viên tại sự kiện thuyết trình dự án AI',
+  '03': 'Lớp xây dựng dashboard bằng Looker Studio cho doanh nghiệp',
+  '04': 'Học viên thực hành trên máy tính trong lớp học',
+  '05': 'Buổi hướng dẫn thực hành trong lớp học',
+  '06': 'Buổi học trực tuyến về VBA tự động hóa Excel',
+  '07': 'Buổi học trực tuyến về tiền xử lý dữ liệu (ETL)',
+  '08': 'Buổi học trực tuyến phân tích báo cáo tài chính',
+  '09': 'Giảng viên hướng dẫn trong phòng học',
+  '10': 'Buổi giao lưu cùng thầy cô và học viên',
+};
+const photos = Object.keys(files).sort().map((k) => ({ src: files[k].default, alt: alts[k.match(/doi-tac-(\d+)/)?.[1] ?? ''] ?? 'Hình ảnh buổi đào tạo' }));
 ---
 <div class="pm" role="region" aria-labelledby="pm-title">
   <div class="wrap pm-head">
