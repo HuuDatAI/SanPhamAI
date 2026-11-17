@@ -42,6 +42,8 @@ export interface Project {
   /** Bộ ảnh (ảnh đầu tiên là ảnh bìa): chỉ tham chiếu khóa trong src/data/media.ts.
    *  sourceType = screenshot_redacted: ảnh chụp thật đã che nhận diện. */
   images?: ProjectImage[];
+  /** Video quay màn hình thật đã che nhận diện, lưu trong public/ (đường dẫn tương đối, không link ngoài). */
+  video?: { file: string; poster?: string; caption: string };
   /** Tiêu đề khối giải pháp (mặc định "Giải pháp"); "Hướng tiếp cận" khi chưa xác minh tính năng. */
   solutionHeading?: string;
   /** Giá trị hướng đến (định tính, không số liệu). */
@@ -85,10 +87,18 @@ const baseProjects: Project[] = [
   {
     id: 'p-tuyen-dung', slug: 'he-thong-ho-tro-tuyen-dung', title: 'Hệ thống hỗ trợ tuyển dụng với AI & tự động hóa',
     summary: 'Tôi phát triển hệ thống hỗ trợ quản lý tuyển dụng, phân tích hồ sơ ứng viên và điều phối lịch phỏng vấn.',
-    industryIds: ['ind-nhan-su'], solutionIds: ['sol-ai', 'sol-tu-dong'], technologies: [], features: [],
+    industryIds: ['ind-nhan-su'], solutionIds: ['sol-ai', 'sol-tu-dong'], technologies: ['n8n', 'AI chấm CV theo JD', 'Google Calendar', 'Xuất Excel'], features: [],
     verification: 'owner_confirmed', problem: '', role: '',
     scope: 'Hệ thống hỗ trợ quản lý tuyển dụng, phân tích hồ sơ ứng viên và điều phối lịch phỏng vấn.', solutionBlocks: [], outcomes: [],
     featured: true, sortOrder: 1, isSample: false, art: 'people', motionPreset: 'narrative',
+    observedScreens: [
+      'Portal xử lý CV: trạng thái phiên theo thời gian thực, chọn nguồn CV (tải lên Portal hoặc lấy từ email), chạy/dừng xử lý theo lượt từng HR, danh sách CV chờ và chạy lại CV đã xử lý để đối soát trùng',
+      'Kết quả chạy CV: hàng chờ HR review, lịch sử chạy, CV đã review, Top 10 theo vị trí, tổng quan theo trạng thái, vị trí và người chạy; lọc nhiều tiêu chí và xuất Excel',
+      'Theo dõi chi phí AI: tổng chi phí, số token, chi phí trung bình mỗi CV, chi phí theo vị trí, theo tháng, theo ngày và theo từng CV',
+      'Bàn làm việc tuyển dụng: chỉ số tuyển dụng, lịch phỏng vấn hôm nay và sắp tới, công việc tự sinh theo giai đoạn, tiến độ ứng viên theo từng giai đoạn từ lên kế hoạch phỏng vấn đến offer và tuyển',
+      'Ứng viên trong quy trình và lịch phỏng vấn: vòng, hình thức trực tiếp/trực tuyến, trạng thái lịch, gửi lời mời qua Google Calendar; có thêm phần Onboarding',
+      'AdminCP và HRCP: quản lý vị trí và tiêu chí JD dùng cho AI chấm CV, nhãn ứng viên, người dùng và phân quyền theo vai trò, email nhận diện HR, cấu hình AI, email, Google và tích hợp',
+    ],
     caveats: [
       'Hướng thiết kế: AI hỗ trợ tổng hợp và đối chiếu hồ sơ theo tiêu chí công việc có dẫn chứng; người làm nhân sự xem xét và quyết định. Không tự động loại hay tuyển ứng viên.',
     ],

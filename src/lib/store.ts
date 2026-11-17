@@ -51,8 +51,10 @@ export function validateProjects(list: Project[]): string[] {
       if (im.sourceType !== 'screenshot_redacted') errs.push(`${at} chỉ nhận ảnh chụp thật đã che (screenshot_redacted): ${im.key}`);
       if (!im.alt.trim() || !im.caption.trim()) errs.push(`${at} ảnh thiếu alt/chú thích: ${im.key}`);
     }
+    if (p.video && (!/^videos\/[a-z0-9-]+\.mp4$/.test(p.video.file) || (p.video.poster && !/^videos\/[a-z0-9-]+\.(webp|jpg|png)$/.test(p.video.poster)) || !p.video.caption.trim()))
+      errs.push(`${at} video phải là tệp trong public/videos/ kèm chú thích`);
     if (p.developmentStatus && p.developmentStatus !== 'in_progress') errs.push(`${at} developmentStatus không hợp lệ`);
-    const texts = [p.title, p.summary, p.problem, p.role, p.scope, ...p.solutionBlocks, ...p.features, ...p.technologies, ...p.outcomes, ...(p.observedScreens ?? []), ...(p.caveats ?? []), ...(p.images ?? []).flatMap((im) => [im.alt, im.caption])];
+    const texts = [p.title, p.summary, p.problem, p.role, p.scope, ...p.solutionBlocks, ...p.features, ...p.technologies, ...p.outcomes, ...(p.observedScreens ?? []), ...(p.caveats ?? []), ...(p.images ?? []).flatMap((im) => [im.alt, im.caption]), p.video?.caption ?? ''];
     if (texts.some((t) => /<[a-z!\/]/i.test(t) || /javascript:/i.test(t))) errs.push(`${at} chứa HTML/script`);
   }
   return errs;

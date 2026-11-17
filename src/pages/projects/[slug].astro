@@ -84,8 +84,16 @@ const shortCap = (c: string) => c.split(' · ')[0];
             {p.technologies.length > 0 && <div class="tags">{p.technologies.map((t) => <span class="tag">{t}</span>)}</div>}
           </section>
         )}
-        {(demo || images.length > 0) && (
+        {(demo || images.length > 0 || p.video) && (
           <section class="reveal"><h2><span>{num()}</span>Hình ảnh và video</h2>
+            {p.video && (
+              <figure class="vid">
+                <video controls playsinline preload="metadata" poster={p.video.poster ? `${base}/${p.video.poster}` : undefined}>
+                  <source src={`${base}/${p.video.file}`} type="video/mp4" />
+                </video>
+                <figcaption>{p.video.caption}</figcaption>
+              </figure>
+            )}
             {images.length > 0 && <ul class="capl">{images.map((im) => <li>{im.caption}</li>)}</ul>}
             {demo && <p><a class="btn line" href={demo} target="_blank" rel="noopener noreferrer">Dùng thử</a></p>}
           </section>
@@ -169,6 +177,9 @@ const shortCap = (c: string) => c.split(' · ')[0];
   .th :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; object-position: left top; }
   .th.on { border-color: var(--accent); }
   .th:hover { border-color: var(--ink); }
+  .vid { margin: 4px 0 16px; }
+  .vid video { display: block; width: 100%; aspect-ratio: 16 / 10; border-radius: 14px; border: 1px solid var(--line, rgba(0,0,0,.1)); background: #0b1220; }
+  .vid figcaption { margin-top: 8px; color: var(--muted); font-size: 13.5px; }
   .capl { list-style: none; padding: 0; margin: 0 0 8px; color: var(--muted); font-size: 13.5px; display: grid; gap: 4px; }
   .zctl { display: inline-flex; gap: 8px; }
   .zimg :global(img) { width: 100%; height: auto; }

@@ -4,7 +4,8 @@
  */
 import type { Project } from './seed';
 
-type Detail = Partial<Pick<Project, 'summary' | 'problem' | 'role' | 'scope' | 'solutionBlocks' | 'solutionHeading' | 'value' | 'cta' | 'images'>>;
+type Detail = Partial<Pick<Project, 'summary' | 'problem' | 'role' | 'scope' | 'solutionBlocks' | 'solutionHeading' | 'value' | 'cta' | 'images' | 'video'>>;
+const NOTE = ' (đã ẩn thông tin nhận diện)';
 
 export const details: Record<string, Detail> = {
   'p-tuyen-dung': {
@@ -12,6 +13,18 @@ export const details: Record<string, Detail> = {
     problem: 'Hồ sơ đến từ nhiều nguồn, tiêu chí tuyển dụng khác nhau và lịch phỏng vấn thay đổi khiến người phụ trách phải theo dõi nhiều đầu việc cùng lúc. Tôi hướng đến việc kết nối các bước này trong một quy trình rõ ràng hơn.',
     role: 'Tôi phát triển giải pháp kết hợp quản trị tuyển dụng và AI hỗ trợ đánh giá hồ sơ.',
     scope: 'Quản lý ứng viên, đánh giá CV và hẹn lịch phỏng vấn.',
+    images: [
+      { key: 'td-1', sourceType: 'screenshot_redacted', alt: 'Portal xử lý CV với trạng thái phiên và bảng điều khiển chạy xử lý hồ sơ', caption: 'Portal xử lý CV: trạng thái phiên và bảng điều khiển' + NOTE },
+      { key: 'td-2', sourceType: 'screenshot_redacted', alt: 'Tổng quan kết quả chạy CV theo trạng thái review, vị trí và người chạy', caption: 'Tổng quan kết quả chấm CV' + NOTE },
+      { key: 'td-3', sourceType: 'screenshot_redacted', alt: 'Danh sách Top 10 CV điểm cao theo từng vị trí tuyển dụng', caption: 'Top 10 CV theo vị trí' + NOTE },
+      { key: 'td-4', sourceType: 'screenshot_redacted', alt: 'Màn hình theo dõi chi phí AI theo vị trí, theo tháng và theo ngày', caption: 'Theo dõi chi phí AI khi chấm CV' + NOTE },
+      { key: 'td-5', sourceType: 'screenshot_redacted', alt: 'Bàn làm việc tuyển dụng với chỉ số, lịch phỏng vấn và công việc cần thực hiện', caption: 'Bàn làm việc tuyển dụng' + NOTE },
+      { key: 'td-6', sourceType: 'screenshot_redacted', alt: 'Danh sách ứng viên trong quy trình với giai đoạn, tiến độ và lịch phỏng vấn gần nhất', caption: 'Ứng viên trong quy trình tuyển dụng' + NOTE },
+      { key: 'td-7', sourceType: 'screenshot_redacted', alt: 'Danh sách lịch phỏng vấn với hình thức, trạng thái và lời mời Google Calendar', caption: 'Lịch phỏng vấn và lời mời Google Calendar' + NOTE },
+      { key: 'td-8', sourceType: 'screenshot_redacted', alt: 'Quản lý danh mục vị trí và tiêu chí JD dùng cho AI chấm CV', caption: 'AdminCP: vị trí và JD cho AI chấm CV' + NOTE },
+      { key: 'td-9', sourceType: 'screenshot_redacted', alt: 'Trang quản trị AdminCP với các nhóm chức năng và chỉ số hệ thống', caption: 'AdminCP: tổng quan quản trị' + NOTE },
+    ],
+    video: { file: 'videos/tuyen-dung-tour.mp4', poster: 'videos/tuyen-dung-poster.webp', caption: 'Video tham quan hệ thống: Portal xử lý CV, kết quả chấm CV, chi phí AI, bàn làm việc tuyển dụng và AdminCP' + NOTE },
     solutionBlocks: [
       'Quản lý tuyển dụng: tập trung thông tin hồ sơ để người phụ trách theo dõi quá trình tuyển dụng.',
       'Đánh giá CV: hỗ trợ phân tích mức độ phù hợp với yêu cầu công việc, làm cơ sở để người phụ trách xem xét tiếp.',
