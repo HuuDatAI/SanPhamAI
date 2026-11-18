@@ -3,7 +3,6 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import ZaloButton from '../components/ZaloButton.astro';
-import PartnerMarquee from '../components/PartnerMarquee.astro';
 import profilePhoto from '../assets/profile-huu-dat.png';
 import { getSettings, getFeaturedProjects } from '../lib/store';
 const s = getSettings();
@@ -98,7 +97,6 @@ const work = [
       <div><h2>Cùng trao đổi về công việc bạn muốn cải thiện.</h2><p class="muted">Trang web không có biểu mẫu thu thập thông tin liên hệ.</p></div>
       <div class="cta-row"><ZaloButton label="Liên hệ qua Zalo" variant="accent" source="about-contact" /></div>
     </div>
-    <PartnerMarquee />
   </section>
 </Base>
 
