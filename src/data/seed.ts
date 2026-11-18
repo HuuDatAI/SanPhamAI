@@ -169,9 +169,12 @@ export const courses: Course[] = courseList;
  * Thiếu cả hai -> giao diện báo "chưa cấu hình", không dẫn tới địa chỉ giả.
  */
 export const settings = {
-  brand: 'STECH',
-  personName: 'Đỗ Trường Sơn',
-  positioning: 'Tư vấn giải pháp AI & chuyển đổi số cho doanh nghiệp vừa và nhỏ · Giảng viên AI ứng dụng',
+  brand: 'HUUDAT AI',
+  personName: 'ThS. Nguyễn Hữu Đạt',
+  positioning: 'Chuyên gia đào tạo về AI & Dữ liệu · Tư vấn chiến lược dữ liệu cho doanh nghiệp',
+  /** Số điện thoại / Zalo hiển thị công khai trên trang Liên hệ. */
+  phone: '0913038346',
+  phoneDisplay: '0913 038 346',
   headline: 'Từ bài toán vận hành đến hệ thống AI ứng dụng.',
   intro: 'Bạn đang có việc lặp lại mỗi ngày, báo cáo làm tay, dữ liệu nằm rải rác? Tôi cùng bạn chọn bài toán, thử giải pháp AI phù hợp và hướng dẫn đội ngũ dùng được trong công việc thật.',
   copyApproved: true, // chủ website đã duyệt nội dung profile (yêu cầu 16/11)
@@ -181,10 +184,10 @@ export const settings = {
    * https://zaloapp.com/qr/p/3v0plyu9tg37?src=qr (chưa xác nhận bằng quét thực tế → chưa cấu hình để không dẫn nhầm).
    * Khi zaloUrl rỗng, mọi nút liên hệ là "Quét mã Zalo" và mở hộp thoại QR.
    */
-  zaloUrl: import.meta.env.PUBLIC_ZALO_URL ?? '',
+  zaloUrl: import.meta.env.PUBLIC_ZALO_URL ?? 'https://zalo.me/0913038346',
+  // QR sinh từ đường dẫn zalo.me ở trên (scripts không cần; ảnh nằm ở public/contact/zalo-qr.png, 840x840).
   zaloQr: import.meta.env.PUBLIC_ZALO_QR ?? (import.meta.env.BASE_URL.replace(/\/$/, '') + '/contact/zalo-qr.png'),
-  zaloQrCaption: 'Quét mã để kết nối Zalo với Đỗ Trường Sơn',
-  zaloQrAlt: 'Mã QR Zalo của Đỗ Trường Sơn. Mở Zalo, bấm nút quét QR để kết bạn.',
-  /** Link xem ảnh QR trên Drive (quyền "ai có link" đã kiểm qua Drive API); chỉ là phương án dự phòng, không phải link Zalo. */
-  zaloQrDrive: 'https://drive.google.com/file/d/1IZeoAoyBm7L5fbgviynJ8Gw7xwcK2Zgu/view',
+  zaloQrCaption: 'Quét mã để kết nối Zalo với ThS. Nguyễn Hữu Đạt',
+  zaloQrAlt: 'Mã QR Zalo của ThS. Nguyễn Hữu Đạt (0913 038 346). Mở Zalo, bấm nút quét QR để kết bạn.',
+  zaloQrDrive: '',
 };

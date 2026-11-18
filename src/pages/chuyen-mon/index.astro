@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import CourseCover from '../../components/CourseCover.astro';
 import Icon from '../../components/Icon.astro';
 import ZaloButton from '../../components/ZaloButton.astro';
-import { getCourses } from '../../lib/store';
+import { getCourses, getSettings } from '../../lib/store';
 import { courseGroups } from '../../data/courses';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const topics = getCourses();
@@ -19,7 +19,7 @@ const steps = [
   <section class="hero" data-scene>
     <div class="ghost" aria-hidden="true" data-depth="-0.5">AI</div>
     <div class="wrap hero-in">
-      <p class="eyebrow reveal" style="--d:0">{`Đỗ Trường Sơn / Chuyên môn`}</p>
+      <p class="eyebrow reveal" style="--d:0">{`${getSettings().personName} / Chuyên môn`}</p>
       <h1 class="reveal" style="--d:1">Hiểu AI.<br />Ứng dụng vào công việc.</h1>
       <p class="lead reveal" style="--d:2">Tôi giảng dạy AI ứng dụng cho người đi làm, với các tình huống gần với công việc hằng ngày.</p>
     </div>

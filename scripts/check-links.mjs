@@ -1,10 +1,10 @@
-// Kiểm liên kết nội bộ sau build: mọi href/src bắt đầu bằng /du-an/ phải trỏ tới tệp có thật trong dist (URL trực tiếp không 404).
+// Kiểm liên kết nội bộ sau build: mọi href/src bắt đầu bằng /SanPhamAI/ phải trỏ tới tệp có thật trong dist (URL trực tiếp không 404).
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, dirname, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const dist = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist');
-const BASE = '/du-an';
+const BASE = '/SanPhamAI';
 function walk(d) { return readdirSync(d).flatMap((f) => { const p = join(d, f); return statSync(p).isDirectory() ? walk(p) : [p]; }); }
 if (!existsSync(dist)) { console.error('Chưa build.'); process.exit(2); }
 

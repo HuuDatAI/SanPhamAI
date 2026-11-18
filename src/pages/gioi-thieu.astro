@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import ZaloButton from '../components/ZaloButton.astro';
 import PartnerMarquee from '../components/PartnerMarquee.astro';
-import profilePhoto from '../assets/profile-giang-day.png';
+import profilePhoto from '../assets/profile-huu-dat.png';
 import { getSettings, getFeaturedProjects } from '../lib/store';
 const s = getSettings();
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -22,14 +22,14 @@ const work = [
       <div class="who">
         <p class="eyebrow reveal" style="--d:0">Giới thiệu</p>
         <h1 class="reveal" style="--d:1">{s.personName}</h1>
-        <p class="role reveal" style="--d:1">Tư vấn giải pháp AI &amp; chuyển đổi số</p>
-        <p class="tags2 reveal" style="--d:2">Phát triển hệ thống · Phân tích dữ liệu · Giảng dạy AI ứng dụng</p>
-        <p class="reveal" style="--d:2">Tôi tư vấn, triển khai các giải pháp AI và chuyển đổi số cho doanh nghiệp vừa và nhỏ, đồng thời giảng dạy AI ứng dụng cho người đi làm.</p>
+        <p class="role reveal" style="--d:1">Chuyên gia đào tạo về AI &amp; Dữ liệu</p>
+        <p class="tags2 reveal" style="--d:2">Lập trình · Phân tích dữ liệu · Tư vấn chiến lược dữ liệu · Giảng dạy AI ứng dụng</p>
+        <p class="reveal" style="--d:2">Tôi có hơn 10 năm kinh nghiệm giảng dạy các bộ môn lập trình và phân tích dữ liệu, đồng thời tư vấn chiến lược dữ liệu lớn cho doanh nghiệp. Tôi đã đào tạo hơn 100 doanh nghiệp và 10.000 học viên.</p>
         <p class="reveal" style="--d:3">Các dự án tôi đã thực hiện trải từ AI hỗ trợ tuyển dụng, phân tích hiệu quả bán hàng, tư vấn khách hàng đa kênh đến LMS và hệ thống quản trị cho doanh nghiệp xây dựng.</p>
         <p class="links reveal" style="--d:3"><a class="link-arrow" href={`${base}/projects/`}>Khám phá dự án</a> <a class="link-arrow" href={`${base}/lien-he/`}>Liên hệ trao đổi</a></p>
       </div>
       <figure class="photo reveal" style="--d:2" data-scene>
-        <Image src={profilePhoto} alt="Đỗ Trường Sơn đang hướng dẫn nội dung phân tích dữ liệu trong buổi đào tạo"
+        <Image src={profilePhoto} alt="Chân dung ThS. Nguyễn Hữu Đạt, chuyên gia đào tạo về AI và dữ liệu"
                widths={[480, 720, 960]} sizes="(max-width: 860px) 100vw, 520px" format="webp" quality={78} loading="eager" data-depth="0.35" />
       </figure>
     </div>
@@ -38,8 +38,14 @@ const work = [
   <section class="section plain">
     <div class="wrap narrow">
       <h2 class="reveal">Kinh nghiệm</h2>
-      <p class="reveal">Tôi có <strong>7 năm kinh nghiệm đảm nhiệm các vị trí quản lý trong các lĩnh vực công nghệ, kinh doanh, thương mại điện tử và marketing</strong>, cùng <strong>6 năm kinh nghiệm đào tạo</strong>. Việc làm việc ở nhiều lĩnh vực giúp tôi kết nối góc nhìn kinh doanh, quản trị và công nghệ khi tư vấn giải pháp, phát triển hệ thống và giảng dạy AI ứng dụng.</p>
-      <p class="reveal">Tôi có nền tảng đào tạo ở hai lĩnh vực: Cử nhân Kinh tế và Cử nhân Công nghệ thông tin. Hai hướng học này hỗ trợ tôi trong việc phân tích bài toán kinh doanh và phát triển giải pháp công nghệ phù hợp.</p>
+      <ul class="reveal exp">
+        <li><strong>Hơn 10 năm kinh nghiệm</strong> giảng dạy các bộ môn lập trình và phân tích dữ liệu.</li>
+        <li><strong>Chuyên gia tư vấn chiến lược dữ liệu lớn</strong> cho nhiều tập đoàn trong các lĩnh vực: Dược phẩm, F&amp;B, Bất động sản, Bán lẻ, Thương mại điện tử.</li>
+        <li><strong>Đã đào tạo hơn 100 doanh nghiệp và 10.000 học viên.</strong></li>
+        <li>Giảng viên đào tạo AI, tham gia xây dựng chương trình đào tạo tại Viettel Academy.</li>
+        <li>Diễn giả về Chuyển đổi số năm 2024 tại tỉnh Long An.</li>
+      </ul>
+      <p class="reveal">Học vị Thạc sĩ. Kết hợp kinh nghiệm giảng dạy và tư vấn thực tế, tôi giúp doanh nghiệp đi từ dữ liệu đến giải pháp AI dùng được trong công việc.</p>
     </div>
   </section>
 
@@ -106,7 +112,8 @@ const work = [
   .links { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 6px; }
   .draft-note { font-size: 13px; }
   .photo { margin: 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); aspect-ratio: 4 / 3.3; box-shadow: 0 18px 40px rgba(11,20,36,.14); }
-  .photo :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 22% 40%; scale: 1.06; will-change: transform; }
+  .photo :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; scale: 1.06; will-change: transform; }
+  .exp { margin: 0 0 14px; padding-left: 20px; display: grid; gap: 8px; }
   .plain .narrow, .narrow { max-width: 760px; }
   .plain h2, .section h2 { margin-bottom: 10px; }
   .alt { background: var(--paper); }

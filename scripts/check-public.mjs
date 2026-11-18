@@ -8,9 +8,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 const localList = join(root, 'scripts', 'forbidden.local.txt');
 const forbidden = existsSync(localList) ? readFileSync(localList, 'utf8').split('\n').map((s) => s.trim().toLowerCase()).filter(Boolean) : [];
-const allowedHosts = new Set(['fonts.googleapis.com', 'fonts.gstatic.com', 'sonreus259-gif.github.io']);
+const allowedHosts = new Set(['fonts.googleapis.com', 'fonts.gstatic.com', 'huudatai.github.io', 'zalo.me']);
 // Liên kết ngoài được phép CHÍNH XÁC theo đường dẫn (không mở cả tên miền): ảnh QR Zalo dự phòng do chủ website cung cấp.
-const allowedPrefixes = ['https://drive.google.com/file/d/1IZeoAoyBm7L5fbgviynJ8Gw7xwcK2Zgu/'];
+const allowedPrefixes = [];
 
 function walk(dir) { return readdirSync(dir).flatMap((f) => { const p = join(dir, f); return statSync(p).isDirectory() ? walk(p) : [p]; }); }
 if (!existsSync(dist)) { console.error('Chưa build: chạy npm run build trước.'); process.exit(2); }

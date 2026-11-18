@@ -55,7 +55,7 @@ const nav = [
     <div class="wrap foot-in">
       <div>
         <strong class="brand">{s.brand}</strong>
-        <p class="muted">{s.personName} · {s.positioning}</p>
+        <p class="muted">{s.personName} · {s.positioning}{s.phone && <> · Điện thoại/Zalo: <a href={`tel:${s.phone}`}>{s.phoneDisplay}</a></>}</p>
       </div>
       <div class="foot-cta">
         <ZaloButton label="Trao đổi qua Zalo" variant="light" source="footer" />
@@ -65,7 +65,7 @@ const nav = [
   {hasQr && (
     <dialog id="qrDlg" class="qr-dlg" aria-label="Mã QR Zalo">
       <figure>
-        <img src={s.zaloQr} alt={s.zaloQrAlt} width="840" height="1280" />
+        <img src={s.zaloQr} alt={s.zaloQrAlt} width="840" height="840" />
         <figcaption>{s.zaloQrCaption}</figcaption>
       </figure>
       <div class="qr-act">

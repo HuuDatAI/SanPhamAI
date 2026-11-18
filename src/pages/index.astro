@@ -5,7 +5,7 @@ import Scene from '../components/Scene.astro';
 import Journey from '../components/Journey.astro';
 import CourseCover from '../components/CourseCover.astro';
 import ZaloButton from '../components/ZaloButton.astro';
-import profilePhoto from '../assets/profile-giang-day.png';
+import profilePhoto from '../assets/profile-huu-dat.png';
 import { getSettings, getFeaturedProjects, getCourses } from '../lib/store';
 const s = getSettings();
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -15,10 +15,10 @@ const topics = allTopics.filter((c) => c.featured);
 ---
 <Base title={s.brand} description={`${s.personName} — ${s.positioning}. Dự án thực tế và chương trình đào tạo AI ứng dụng.`} hero>
   <section class="hero" data-scene>
-    <div class="ghost" aria-hidden="true" data-depth="-0.5">STECH</div>
+    <div class="ghost" aria-hidden="true" data-depth="-0.5">AI &amp; DATA</div>
     <div class="wrap hero-in">
       <div class="hero-copy">
-        <p class="eyebrow reveal" style="--d:0">{s.personName} · Tư vấn AI &amp; chuyển đổi số · Giảng viên</p>
+        <p class="eyebrow reveal" style="--d:0">{s.personName} · Chuyên gia đào tạo AI &amp; Dữ liệu · Giảng viên</p>
         <h1 class="reveal" style="--d:1">{s.headline}</h1>
         <p class="lead reveal" style="--d:2">{s.intro}</p>
         <div class="cta-row reveal" style="--d:3">
@@ -28,7 +28,7 @@ const topics = allTopics.filter((c) => c.featured);
       </div>
       <div class="hero-visual reveal" style="--d:2">
         <figure class="photo">
-          <Image src={profilePhoto} alt="Đỗ Trường Sơn đang hướng dẫn nội dung phân tích dữ liệu trong buổi đào tạo"
+          <Image src={profilePhoto} alt="Chân dung ThS. Nguyễn Hữu Đạt, chuyên gia đào tạo về AI và dữ liệu"
                  widths={[480, 720, 960]} sizes="(max-width: 860px) 100vw, 520px" format="webp" quality={78} loading="eager" data-depth="0.3" />
         </figure>
         <div class="float f1"><Scene kind="chat" layers={['l1']} depths={[0, 0.9, 0]} /></div>
@@ -61,8 +61,8 @@ const topics = allTopics.filter((c) => c.featured);
       <div>
         <p class="eyebrow">Giới thiệu</p>
         <h2>{s.personName}</h2>
-        <p>Tôi tư vấn giải pháp hệ thống và chuyển đổi số cho doanh nghiệp vừa và nhỏ, đồng thời giảng dạy AI ứng dụng cho người đi làm: tự động hóa, trợ lý AI, Excel và báo cáo, AI cho kế toán và văn phòng.</p>
-        <ul class="marks"><li><strong>7 năm</strong> đảm nhiệm các vị trí quản lý trong lĩnh vực công nghệ, kinh doanh, thương mại điện tử và marketing</li><li><strong>6 năm</strong> kinh nghiệm đào tạo</li></ul>
+        <p>Chuyên gia đào tạo về AI &amp; Dữ liệu, tư vấn chiến lược dữ liệu lớn cho doanh nghiệp trong các lĩnh vực Dược phẩm, F&amp;B, Bất động sản, Bán lẻ và Thương mại điện tử.</p>
+        <ul class="marks"><li><strong>Hơn 10 năm</strong> kinh nghiệm giảng dạy lập trình và phân tích dữ liệu</li><li><strong>100+ doanh nghiệp</strong> và <strong>10.000 học viên</strong> đã được đào tạo</li></ul>
         <p><a class="link-arrow" href={`${base}/gioi-thieu/`}>Đọc phần giới thiệu đầy đủ</a></p>
       </div>
     </div>
@@ -91,7 +91,7 @@ const topics = allTopics.filter((c) => c.featured);
   .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
   .hero-visual { position: relative; }
   .photo { margin: 0; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,.7); aspect-ratio: 4 / 3; box-shadow: 0 22px 48px rgba(11,20,36,.2); }
-  .photo :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 22% 40%; scale: 1.06; will-change: transform; }
+  .photo :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; scale: 1.06; will-change: transform; }
   .float { position: absolute; }
   .float.f1 { left: -9%; bottom: -12%; width: 46%; }
   .float.f2 { right: -4%; top: -10%; width: 42%; }
